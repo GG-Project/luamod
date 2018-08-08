@@ -11,6 +11,7 @@
 #include <meta_api.h>
 #include <string>
 #include <stdexcept>
+#include <luamod_utils.hpp>
 
 CLuaWorker *g_luaworker;
 
@@ -21,8 +22,11 @@ CLuaWorker::CLuaWorker()
     try {
         state = luaL_newstate();
         loadLuaApi(state);
-        std::string filename = "./valve/addons/luamod/core/init.lua";
-        if(luaL_loadfile(state, filename.c_str())) throw std::runtime_error(lua_tostring(state, -1));
+	char buffer[32], filename[256];
+	luamod_utils::get_mod(buffer);
+	ALERT(at_console, "[LM] Mod name : %s\n", buffer);
+	sprintf(filename, "%s/addons/luamod/core/init.lua", buffer);
+        if(luaL_loadfile(state, filename)) throw std::runtime_error(lua_tostring(state, -1));
         if(lua_pcall(state, 0, LUA_MULTRET, 0)) throw std::runtime_error(lua_tostring(state, -1));
     }
     catch (std::runtime_error &err) {

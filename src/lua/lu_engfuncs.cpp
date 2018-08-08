@@ -70,7 +70,8 @@ int lu_engfuncs::l_pfnPrecacheSound(lua_State *L)
 
 int lu_engfuncs::l_pfnPrecacheGeneric(lua_State *L)
 {
-	PRECACHE_GENERIC(luaL_checkstring(L, 1));
+	luaL_error(L, "SV_PrecacheGeneric: ( %s ). Precache can only be done in spawn functions.", luaL_checkstring(L, 1));
+//	PRECACHE_GENERIC(luaL_checkstring(L, 1));
 	return 1;
 }
 

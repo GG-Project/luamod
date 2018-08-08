@@ -1,6 +1,7 @@
 #include <string.h>
 #include <extdll.h>
 #include <meta_api.h>
+#include "luamod_utils.hpp"
 
 enginefuncs_t g_engfuncs;
 globalvars_t  *gpGlobals;
@@ -12,4 +13,25 @@ C_DLLEXPORT void WINAPI GiveFnptrsToDll(enginefuncs_t *pengfuncsFromEngine, glob
 {
 	memcpy(&g_engfuncs, pengfuncsFromEngine, sizeof(enginefuncs_t));
 	gpGlobals = pGlobals;
+	
+	char game_dir[256], filePath[100], mod_name[32];
+	
+	int pos = 0;
+	
+	(*g_engfuncs.pfnGetGameDir)( game_dir );
+
+        if(strstr(game_dir,"/"))
+        {
+                pos = strlen( game_dir ) - 1;
+
+                // scan backwards till first directory separator...
+                while ((pos > 0) && (game_dir[pos] != '/'))
+                        pos--;
+                if (pos == 0)
+                        ALERT(at_console, "[LM] Error determining MOD directory name! \n" );
+
+                pos++;
+        }
+        strcpy( mod_name, &game_dir[pos] );
+        luamod_utils::set_mod(mod_name);
 }

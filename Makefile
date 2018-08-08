@@ -6,6 +6,7 @@ NAME = luamod
 COMPILER = g++
 
 OBJECTS = \
+src/luamod_utils.cpp \
 src/public.cpp \
 src/callbacks.cpp \
 src/dllapi.cpp \
