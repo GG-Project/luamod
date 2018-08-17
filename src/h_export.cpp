@@ -13,11 +13,11 @@ C_DLLEXPORT void WINAPI GiveFnptrsToDll(enginefuncs_t *pengfuncsFromEngine, glob
 {
 	memcpy(&g_engfuncs, pengfuncsFromEngine, sizeof(enginefuncs_t));
 	gpGlobals = pGlobals;
-	
-	char game_dir[256], filePath[100], mod_name[32];
-	
+
+	char game_dir[256], mod_name[32];
+
 	int pos = 0;
-	
+
 	(*g_engfuncs.pfnGetGameDir)( game_dir );
 
         if(strstr(game_dir,"/"))

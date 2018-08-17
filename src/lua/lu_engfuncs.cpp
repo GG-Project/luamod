@@ -32,6 +32,14 @@ void		(*pfnCVarSetString)			(const char *szVarName, const char *szValue);
 cvar_t		(*pfnCVarGetPointer)		(const char *szVarName);
 */
 
+/*
+void		(*pfnClientCommand)			(edict_t* pEdict, const char* szFmt, ...);
+*/
+
+/*
+void		(*pfnClientPrintf)			( edict_t* pEdict, PRINT_TYPE ptype, const char *szMsg );
+*/
+
 void lu_engfuncs::init_api(lua_State *L)
 {
   lua_register(L, "precache_model", l_pfnPrecacheModel);
@@ -54,6 +62,10 @@ void lu_engfuncs::init_api(lua_State *L)
   lua_register(L, "cvar_get_string", l_pfnCVarGetString);
   lua_register(L, "cvar_set_float", l_pfnCVarSetFloat);
   lua_register(L, "cvar_set_string", l_pfnCVarSetString);
+  //
+  lua_register(L, "client_command", l_pfnClientCommand);
+  lua_register(L, "client_printf", l_pfnClientPrintf);
+  //
 }
 
 int lu_engfuncs::l_pfnPrecacheModel(lua_State *L)
@@ -182,3 +194,54 @@ int lu_engfuncs::l_pfnCVarSetString(lua_State *L)
 	CVAR_SET_STRING(luaL_checkstring(L, 1), luaL_checkstring(L, 2));
 	return 1;
 }
+
+int lu_engfuncs::l_pfnClientCommand(lua_State *L)
+{
+	CLIENT_COMMAND((edict_t*)lua_touserdata(L, 1), "%s\n", luaL_checkstring(L, 2));
+	return 1;
+}
+
+int lu_engfuncs::l_pfnClientPrintf(lua_State *L)
+{
+	CLIENT_PRINTF((edict_t*)lua_touserdata(L, 1), print_center, luaL_checkstring(L, 2));
+	return 1;
+}
+
+/*
+int lu_engfuncs::l_test(lua_State *L)
+{
+    int gmsgHudText = REG_USER_MSG("HudText", -1);
+    MESSAGE_BEGIN( MSG_ONE, gmsgHudText, NULL, (edict_t*)lua_touserdata(L, 1) );
+    WRITE_STRING( "Hello Faggot\n" );
+    MESSAGE_END();
+
+#define	MSG_BROADCAST	0
+#define SVC_TEMPENTITY	23
+
+MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
+
+	WRITE_BYTE(29);
+	WRITE_BYTE(-1 & 0xFF);
+	WRITE_SHORT(-1.0);
+	WRITE_SHORT(0.20);
+	WRITE_BYTE(0);
+	WRITE_BYTE(200);
+	WRITE_BYTE(100);
+	WRITE_BYTE(0);
+	WRITE_BYTE(0);
+	WRITE_BYTE(255);
+	WRITE_BYTE(255);
+	WRITE_BYTE(250);
+	WRITE_BYTE(0);
+	WRITE_SHORT(2.0);
+	WRITE_SHORT(2.0);
+	WRITE_SHORT(12.0);
+	
+	if (textparms.effect == 2)
+		WRITE_SHORT(FixedUnsigned16(textparms.fxTime, (1<<8)));
+	
+	WRITE_STRING("Welcome Faggot");
+	MESSAGE_END();
+    return 1;
+}
+*/
