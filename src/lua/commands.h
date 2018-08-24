@@ -1,3 +1,5 @@
+#pragma once
+
 namespace commands {
-  int lRegClient();
+    int lRegClient();
 };

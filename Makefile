@@ -17,6 +17,7 @@ src/lua_functions.cpp \
 src/meta_api.cpp \
 src/lua/CLuaWorker.cpp \
 src/lua/commands.cpp \
+src/lua/lu_output.cpp \
 src/lua/lu_offset.cpp \
 src/lua/lu_engfuncs.cpp \
 src/lua/luaapi.cpp

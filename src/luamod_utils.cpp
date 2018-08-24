@@ -4,14 +4,10 @@
 
 char mod_name_utils[32];
 
-void luamod_utils::set_mod(char buff[32])
-{
-	strcpy(mod_name_utils, buff);
+void luamod_utils::SetModName(char buff[32]) {
+    strcpy(mod_name_utils, buff);
 }
 
-void luamod_utils::get_mod(char buff[32])
-{
-//	char kek;
-//	strcpy(kek, mod_name_utils);
-	strcpy(buff, mod_name_utils);
+void luamod_utils::GetModName(char buff[32]) {
+    strcpy(buff, mod_name_utils);
 }

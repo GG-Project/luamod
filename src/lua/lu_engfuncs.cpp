@@ -8,7 +8,7 @@
 int			(*pfnPrecacheModel)			(char* s);
 int			(*pfnPrecacheSound)			(char* s);
 int			(*pfnPrecacheGeneric)		(char* s);
-*/
+ */
 
 /*
 void		(*pfnMessageBegin)			(int msg_dest, int msg_type, const float *pOrigin, edict_t *ed);
@@ -21,7 +21,7 @@ void		(*pfnWriteAngle)			(float flValue);
 void		(*pfnWriteCoord)			(float flValue);
 void		(*pfnWriteString)			(const char *sz);
 void		(*pfnWriteEntity)			(int iValue);
-*/
+ */
 
 /*
 void		(*pfnCVarRegister)			(cvar_t *pCvar);
@@ -30,218 +30,157 @@ const char*	(*pfnCVarGetString)			(const char *szVarName);
 void		(*pfnCVarSetFloat)			(const char *szVarName, float flValue);
 void		(*pfnCVarSetString)			(const char *szVarName, const char *szValue);
 cvar_t		(*pfnCVarGetPointer)		(const char *szVarName);
-*/
+ */
 
 /*
 void		(*pfnClientCommand)			(edict_t* pEdict, const char* szFmt, ...);
-*/
+ */
 
 /*
 void		(*pfnClientPrintf)			( edict_t* pEdict, PRINT_TYPE ptype, const char *szMsg );
-*/
+ */
 
-void lu_engfuncs::init_api(lua_State *L)
-{
-  lua_register(L, "precache_model", l_pfnPrecacheModel);
-  lua_register(L, "precache_sound", l_pfnPrecacheSound);
-  lua_register(L, "precache_generic", l_pfnPrecacheGeneric);
-  //
-  lua_register(L, "message_begin", l_pfnMessageBegin);
-  lua_register(L, "message_end", l_pfnMessageEnd);
-  lua_register(L, "write_byte", l_pfnWriteByte);
-  lua_register(L, "write_char", l_pfnWriteChar);
-  lua_register(L, "write_short", l_pfnWriteShort);
-  lua_register(L, "write_long", l_pfnWriteLong);
-  lua_register(L, "write_angle", l_pfnWriteAngle);
-  lua_register(L, "write_coord", l_pfnWriteCoord);
-  lua_register(L, "write_string", l_pfnWriteString);
-  lua_register(L, "write_entity", l_pfnWriteEntity);
-  //
-  lua_register(L, "cvar_register", l_pfnRegister_Cvar);
-  lua_register(L, "cvar_get_float", l_pfnCVarGetFloat);
-  lua_register(L, "cvar_get_string", l_pfnCVarGetString);
-  lua_register(L, "cvar_set_float", l_pfnCVarSetFloat);
-  lua_register(L, "cvar_set_string", l_pfnCVarSetString);
-  //
-  lua_register(L, "client_command", l_pfnClientCommand);
-  lua_register(L, "client_printf", l_pfnClientPrintf);
-  //
+void lu_engfuncs::init_api(lua_State *L) {
+    lua_register(L, "precache_model", l_pfnPrecacheModel);
+    lua_register(L, "precache_sound", l_pfnPrecacheSound);
+    lua_register(L, "precache_generic", l_pfnPrecacheGeneric);
+    //
+    lua_register(L, "message_begin", l_pfnMessageBegin);
+    lua_register(L, "message_end", l_pfnMessageEnd);
+    lua_register(L, "write_byte", l_pfnWriteByte);
+    lua_register(L, "write_char", l_pfnWriteChar);
+    lua_register(L, "write_short", l_pfnWriteShort);
+    lua_register(L, "write_long", l_pfnWriteLong);
+    lua_register(L, "write_angle", l_pfnWriteAngle);
+    lua_register(L, "write_coord", l_pfnWriteCoord);
+    lua_register(L, "write_string", l_pfnWriteString);
+    lua_register(L, "write_entity", l_pfnWriteEntity);
+    //
+    lua_register(L, "cvar_register", l_pfnRegister_Cvar);
+    lua_register(L, "cvar_get_float", l_pfnCVarGetFloat);
+    lua_register(L, "cvar_get_string", l_pfnCVarGetString);
+    lua_register(L, "cvar_set_float", l_pfnCVarSetFloat);
+    lua_register(L, "cvar_set_string", l_pfnCVarSetString);
+    //
+    lua_register(L, "client_command", l_pfnClientCommand);
+    lua_register(L, "client_printf", l_pfnClientPrintf);
+    //
 }
 
-int lu_engfuncs::l_pfnPrecacheModel(lua_State *L)
-{
-	PRECACHE_MODEL(luaL_checkstring(L, 1));
-	return 1;
+int lu_engfuncs::l_pfnPrecacheModel(lua_State *L) {
+    PRECACHE_MODEL(luaL_checkstring(L, 1));
+    return 1;
 }
 
-int lu_engfuncs::l_pfnPrecacheSound(lua_State *L)
-{
-	PRECACHE_SOUND(luaL_checkstring(L, 1));
-	return 1;
+int lu_engfuncs::l_pfnPrecacheSound(lua_State *L) {
+    PRECACHE_SOUND(luaL_checkstring(L, 1));
+    return 1;
 }
 
-int lu_engfuncs::l_pfnPrecacheGeneric(lua_State *L)
-{
-	luaL_error(L, "SV_PrecacheGeneric: ( %s ). Precache can only be done in spawn functions.", luaL_checkstring(L, 1));
-//	PRECACHE_GENERIC(luaL_checkstring(L, 1));
-	return 1;
+int lu_engfuncs::l_pfnPrecacheGeneric(lua_State *L) {
+    luaL_error(L, "SV_PrecacheGeneric: ( %s ). Precache can only be done in spawn functions.", luaL_checkstring(L, 1));
+    //	PRECACHE_GENERIC(luaL_checkstring(L, 1));
+    return 1;
 }
 
-int lu_engfuncs::l_pfnMessageBegin(lua_State *L)
-{
+int lu_engfuncs::l_pfnMessageBegin(lua_State *L) {
     //luaL_checktable(L, 3); // Origin
     std::vector<float> origin;
 
     lua_pushnil(L);
-	while (lua_next(L, 3))
-	{
-		lua_pushvalue(L, -1);
-		origin.push_back(luaL_checknumber(L, -1));
-		lua_pop(L, 2);
+    while (lua_next(L, 3)) {
+        lua_pushvalue(L, -1);
+        origin.push_back(luaL_checknumber(L, -1));
+        lua_pop(L, 2);
     }
 
-    MESSAGE_BEGIN (
-        luaL_checkinteger(L, 1), // DEST
-        luaL_checkinteger(L, 2), // TYPE
-        origin.data(),           // ORIGIN
-        (edict_t*)lua_touserdata(L, 4)  // PLAYER
-    );
+    MESSAGE_BEGIN(
+            luaL_checkinteger(L, 1), // DEST
+            luaL_checkinteger(L, 2), // TYPE
+            origin.data(), // ORIGIN
+            (edict_t*) lua_touserdata(L, 4) // PLAYER
+            );
 
     return 0;
 }
 
-int lu_engfuncs::l_pfnMessageEnd(lua_State *L)
-{
+int lu_engfuncs::l_pfnMessageEnd(lua_State *L) {
     MESSAGE_END();
     return 0;
 }
 
-int lu_engfuncs::l_pfnWriteByte(lua_State *L)
-{
+int lu_engfuncs::l_pfnWriteByte(lua_State *L) {
     WRITE_BYTE(luaL_checkinteger(L, 1));
     return 0;
 }
 
-int lu_engfuncs::l_pfnWriteChar(lua_State *L)
-{
+int lu_engfuncs::l_pfnWriteChar(lua_State *L) {
     WRITE_CHAR(luaL_checkinteger(L, 1));
     return 0;
 }
 
-int lu_engfuncs::l_pfnWriteShort(lua_State *L)
-{
+int lu_engfuncs::l_pfnWriteShort(lua_State *L) {
     WRITE_SHORT(luaL_checkinteger(L, 1));
     return 0;
 }
 
-int lu_engfuncs::l_pfnWriteLong(lua_State *L)
-{
+int lu_engfuncs::l_pfnWriteLong(lua_State *L) {
     WRITE_LONG(luaL_checkinteger(L, 1));
     return 0;
 }
 
-int lu_engfuncs::l_pfnWriteAngle(lua_State *L)
-{
+int lu_engfuncs::l_pfnWriteAngle(lua_State *L) {
     WRITE_ANGLE(luaL_checknumber(L, 1));
     return 0;
 }
 
-int lu_engfuncs::l_pfnWriteCoord(lua_State *L)
-{
+int lu_engfuncs::l_pfnWriteCoord(lua_State *L) {
     WRITE_COORD(luaL_checknumber(L, 1));
     return 0;
 }
 
-int lu_engfuncs::l_pfnWriteString(lua_State *L)
-{
+int lu_engfuncs::l_pfnWriteString(lua_State *L) {
     WRITE_STRING(luaL_checkstring(L, 1));
     return 0;
 }
 
-int lu_engfuncs::l_pfnWriteEntity(lua_State *L)
-{
+int lu_engfuncs::l_pfnWriteEntity(lua_State *L) {
     WRITE_ENTITY(luaL_checkinteger(L, 1));
     return 0;
 }
 
-int lu_engfuncs::l_pfnRegister_Cvar(lua_State *L)
-{
-        cvar_t cvar_lua_mod = { luaL_checkstring(L, 1), (char*)luaL_checkstring(L, 2) };
-        CVAR_REGISTER(&cvar_lua_mod);
-        return 0;
+int lu_engfuncs::l_pfnRegister_Cvar(lua_State *L) {
+    cvar_t cvar_lua_mod = {luaL_checkstring(L, 1), (char*) luaL_checkstring(L, 2)};
+    CVAR_REGISTER(&cvar_lua_mod);
+    return 0;
 }
 
-int lu_engfuncs::l_pfnCVarGetFloat(lua_State *L)
-{
-	lua_pushnumber(L, CVAR_GET_FLOAT(luaL_checkstring(L, 1)));
-	return 1;
-}
-
-int lu_engfuncs::l_pfnCVarGetString(lua_State *L)
-{
-	lua_pushstring(L, CVAR_GET_STRING(luaL_checkstring(L, 1)));
-	return 1;
-}
-
-int lu_engfuncs::l_pfnCVarSetFloat(lua_State *L)
-{
-	CVAR_SET_FLOAT(luaL_checkstring(L, 1), luaL_checknumber(L, 2));
-	return 1;
-}
-
-int lu_engfuncs::l_pfnCVarSetString(lua_State *L)
-{
-	CVAR_SET_STRING(luaL_checkstring(L, 1), luaL_checkstring(L, 2));
-	return 1;
-}
-
-int lu_engfuncs::l_pfnClientCommand(lua_State *L)
-{
-	CLIENT_COMMAND((edict_t*)lua_touserdata(L, 1), "%s\n", luaL_checkstring(L, 2));
-	return 1;
-}
-
-int lu_engfuncs::l_pfnClientPrintf(lua_State *L)
-{
-	CLIENT_PRINTF((edict_t*)lua_touserdata(L, 1), print_center, luaL_checkstring(L, 2));
-	return 1;
-}
-
-/*
-int lu_engfuncs::l_test(lua_State *L)
-{
-    int gmsgHudText = REG_USER_MSG("HudText", -1);
-    MESSAGE_BEGIN( MSG_ONE, gmsgHudText, NULL, (edict_t*)lua_touserdata(L, 1) );
-    WRITE_STRING( "Hello Faggot\n" );
-    MESSAGE_END();
-
-#define	MSG_BROADCAST	0
-#define SVC_TEMPENTITY	23
-
-MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
-
-	WRITE_BYTE(29);
-	WRITE_BYTE(-1 & 0xFF);
-	WRITE_SHORT(-1.0);
-	WRITE_SHORT(0.20);
-	WRITE_BYTE(0);
-	WRITE_BYTE(200);
-	WRITE_BYTE(100);
-	WRITE_BYTE(0);
-	WRITE_BYTE(0);
-	WRITE_BYTE(255);
-	WRITE_BYTE(255);
-	WRITE_BYTE(250);
-	WRITE_BYTE(0);
-	WRITE_SHORT(2.0);
-	WRITE_SHORT(2.0);
-	WRITE_SHORT(12.0);
-	
-	if (textparms.effect == 2)
-		WRITE_SHORT(FixedUnsigned16(textparms.fxTime, (1<<8)));
-	
-	WRITE_STRING("Welcome Faggot");
-	MESSAGE_END();
+int lu_engfuncs::l_pfnCVarGetFloat(lua_State *L) {
+    lua_pushnumber(L, CVAR_GET_FLOAT(luaL_checkstring(L, 1)));
     return 1;
 }
-*/
+
+int lu_engfuncs::l_pfnCVarGetString(lua_State *L) {
+    lua_pushstring(L, CVAR_GET_STRING(luaL_checkstring(L, 1)));
+    return 1;
+}
+
+int lu_engfuncs::l_pfnCVarSetFloat(lua_State *L) {
+    CVAR_SET_FLOAT(luaL_checkstring(L, 1), luaL_checknumber(L, 2));
+    return 1;
+}
+
+int lu_engfuncs::l_pfnCVarSetString(lua_State *L) {
+    CVAR_SET_STRING(luaL_checkstring(L, 1), luaL_checkstring(L, 2));
+    return 1;
+}
+
+int lu_engfuncs::l_pfnClientCommand(lua_State *L) {
+    CLIENT_COMMAND((edict_t*) lua_touserdata(L, 1), "%s\n", luaL_checkstring(L, 2));
+    return 1;
+}
+
+int lu_engfuncs::l_pfnClientPrintf(lua_State *L) {
+    CLIENT_PRINTF((edict_t*) lua_touserdata(L, 1), print_center, luaL_checkstring(L, 2));
+    return 1;
+}

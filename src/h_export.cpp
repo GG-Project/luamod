@@ -4,34 +4,33 @@
 #include "luamod_utils.hpp"
 
 enginefuncs_t g_engfuncs;
-globalvars_t  *gpGlobals;
+globalvars_t *gpGlobals;
 
 // Receive engine function table from engine.
 // This appears to be the _first_ DLL routine called by the engine, so we
 // do some setup operations here.
-C_DLLEXPORT void WINAPI GiveFnptrsToDll(enginefuncs_t *pengfuncsFromEngine, globalvars_t *pGlobals)
-{
-	memcpy(&g_engfuncs, pengfuncsFromEngine, sizeof(enginefuncs_t));
-	gpGlobals = pGlobals;
 
-	char game_dir[256], mod_name[32];
+C_DLLEXPORT void WINAPI GiveFnptrsToDll(enginefuncs_t *pengfuncsFromEngine, globalvars_t *pGlobals) {
+    memcpy(&g_engfuncs, pengfuncsFromEngine, sizeof (enginefuncs_t));
+    gpGlobals = pGlobals;
 
-	int pos = 0;
+    char game_dir[256], mod_name[32];
 
-	(*g_engfuncs.pfnGetGameDir)( game_dir );
+    int pos = 0;
 
-        if(strstr(game_dir,"/"))
-        {
-                pos = strlen( game_dir ) - 1;
+    (*g_engfuncs.pfnGetGameDir)(game_dir);
 
-                // scan backwards till first directory separator...
-                while ((pos > 0) && (game_dir[pos] != '/'))
-                        pos--;
-                if (pos == 0)
-                        ALERT(at_console, "[LM] Error determining MOD directory name! \n" );
+    if (strstr(game_dir, "/")) {
+        pos = strlen(game_dir) - 1;
 
-                pos++;
-        }
-        strcpy( mod_name, &game_dir[pos] );
-        luamod_utils::set_mod(mod_name);
+        // scan backwards till first directory separator...
+        while ((pos > 0) && (game_dir[pos] != '/'))
+            pos--;
+        if (pos == 0)
+            ALERT(at_console, "[LM] Error determining MOD directory name! \n");
+
+        pos++;
+    }
+    strcpy(mod_name, &game_dir[pos]);
+    luamod_utils::SetModName(mod_name);
 }
