@@ -44,8 +44,10 @@ C_DLLEXPORT int Meta_Attach(PLUG_LOADTIME now, META_FUNCTIONS *pFunctionTable, m
 
     g_luaworker = new CLuaWorker();
 
+#ifdef REHLDS_SUPPORT
     if (meta_init_rehlds_api())
         g_engfuncs.pfnServerPrint("ReHLDS API successfully initialized.\n");
+#endif
 
     memcpy(pFunctionTable, &gMetaFunctionTable, sizeof (META_FUNCTIONS));
     return TRUE;
