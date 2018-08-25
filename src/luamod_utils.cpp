@@ -5,11 +5,11 @@
 char mod_name_utils[32];
 
 void luamod_utils::SetModName(char buff[32]) {
-    strncpy(mod_name_utils, buff, strlen(buff));
+    strcpy(mod_name_utils, buff);
 }
 
 void luamod_utils::GetModName(char buff[32]) {
-    strncpy(buff, mod_name_utils, strlen(mod_name_utils));
+    strcpy(buff, mod_name_utils);
 }
 
 void UTIL_HUDMessage(const char* msg) {
