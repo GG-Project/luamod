@@ -67,6 +67,9 @@ void lu_engfuncs::init_api(lua_State *L) {
     lua_register(L, "client_command", l_pfnClientCommand);
     lua_register(L, "client_printf", l_pfnClientPrintf);
     //
+    #ifdef REHLDS_SUPPORT
+    //REHLDS
+    #endif
 }
 
 int lu_engfuncs::l_pfnPrecacheModel(lua_State *L) {

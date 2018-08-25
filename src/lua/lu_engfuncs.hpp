@@ -27,4 +27,7 @@ namespace lu_engfuncs {
     int l_pfnClientCommand(lua_State *L);
     int l_pfnClientPrintf(lua_State *L);
     //
+    #ifdef REHLDS_SUPPORT
+    //REHLDS
+    #endif
 }
