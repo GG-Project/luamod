@@ -1,6 +1,7 @@
 #pragma once
 #include <extdll.h>
 #include <meta_api.h>
+#include <string.h>
 
 //#define LM_ALERT ,ALERT_TYPE alerttype ,const char *msg ALERT(alerttype,"[LM] %s", msg)
 //#define LM_ALERT_CONSOLE (*g_engfuncs.pfnAlertMessage)(at_console);

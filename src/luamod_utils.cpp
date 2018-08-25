@@ -5,9 +5,9 @@
 char mod_name_utils[32];
 
 void luamod_utils::SetModName(char buff[32]) {
-    strcpy(mod_name_utils, buff);
+    strncpy(mod_name_utils, buff, strlen(mod_name_utils));
 }
 
 void luamod_utils::GetModName(char buff[32]) {
-    strcpy(buff, mod_name_utils);
+    strncpy(buff, mod_name_utils, strlen(buff));
 }

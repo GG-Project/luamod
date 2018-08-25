@@ -1,7 +1,9 @@
 #include "lu_engfuncs.hpp"
 #include <extdll.h>
 #include <meta_api.h>
+#ifdef REHLDS_SUPPORT
 #include "ex_rehlds_api.h"
+#endif
 #include <vector>
 
 /*

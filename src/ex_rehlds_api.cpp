@@ -1,6 +1,8 @@
+#ifdef REHLDS_SUPPORT
 #include <extdll.h>
 #include <meta_api.h>
 #include "ex_rehlds_api.h"
+
 
 IRehldsApi* g_RehldsApi;
 const RehldsFuncs_t* g_RehldsFuncs;
@@ -68,3 +70,4 @@ bool meta_init_rehlds_api() {
 
     return true;
 }
+#endif
