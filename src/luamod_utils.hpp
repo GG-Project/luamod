@@ -12,6 +12,6 @@
 namespace luamod_utils {
     void SetModName(char buff[32]);
     void GetModName(char buff[32]);
-}
+};
 
 // void LM_ALERT(const char *msg);

@@ -23,7 +23,7 @@ CLuaWorker::CLuaWorker() {
         loadLuaApi(state);
         char buffer[32], filename[256];
         luamod_utils::GetModName(buffer);
-        ALERT(at_console, "[LM] Mod name : %s\n", buffer);
+        ALERT(at_console, "[LM] Mod path : %s\n", buffer);
         sprintf(filename, "%s/addons/luamod/core/init.lua", buffer);
         if (luaL_loadfile(state, filename)) throw std::runtime_error(lua_tostring(state, -1));
         if (lua_pcall(state, 0, LUA_MULTRET, 0)) throw std::runtime_error(lua_tostring(state, -1));

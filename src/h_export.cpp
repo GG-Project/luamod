@@ -31,6 +31,6 @@ C_DLLEXPORT void WINAPI GiveFnptrsToDll(enginefuncs_t *pengfuncsFromEngine, glob
 
         pos++;
     }
-    strncpy(mod_name, &game_dir[pos], strlen(&game_dir[pos]));
+    strncpy(mod_name, &game_dir[pos], sizeof(mod_name));
     luamod_utils::SetModName(mod_name);
 }
