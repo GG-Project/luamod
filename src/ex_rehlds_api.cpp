@@ -11,7 +11,7 @@ IRehldsServerStatic* g_RehldsSvs;
 
 bool rehlds_api_try_init(CSysModule* engineModule, char* failureReason) {
     if (!engineModule) {
-        gpMetaUtilFuncs->pfnLogConsole(PLID, "Failed to locate engine module\n");
+        sprintf(failureReason, "Failed to locate engine module\n");
         return false;
     }
 
@@ -63,7 +63,7 @@ bool meta_init_rehlds_api() {
 #else
     CSysModule* engineModule = Sys_LoadModule("engine_i486.so");
     if (!rehlds_api_try_init(engineModule, failReason)) {
-        gpMetaUtilFuncs->pfnLogConsole(PLID, "%s", failReason);
+                gpMetaUtilFuncs->pfnLogConsole(PLID, "%s", failReason);
         return false;
     }
 #endif
