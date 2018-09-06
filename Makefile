@@ -1,60 +1,81 @@
+# LuaMod makefile based on hlsdk 2.3 makefile
+
 HLSDK = include/hlsdk
 METAMOD = include/metamod
 
-NAME = luamod
+DLLNAME=luamod_mm
 
-COMPILER = g++
+ARCH=i386
 
-OBJECTS = \
-src/luamod_utils.cpp \
-src/public.cpp \
-src/callbacks.cpp \
-src/dllapi.cpp \
-src/engine_api.cpp \
-src/ex_rehlds_api.cpp \
-src/h_export.cpp \
-src/lua_functions.cpp \
-src/meta_api.cpp \
-src/lua/CLuaWorker.cpp \
-src/lua/commands.cpp \
-src/lua/lu_output.cpp \
-src/lua/lu_offset.cpp \
-src/lua/lu_engfuncs.cpp \
-src/lua/luaapi.cpp
+CC?=gcc
+CXX?=g++
 
-LINK =-L./lua -llua
+LUAMOD_VERSION_GIT := $(firstword $(shell git rev-parse --short=6 HEAD) unknown)
 
-OPT_FLAGS = -O3 -msse3 -flto -funroll-loops -fomit-frame-pointer -fno-stack-protector -fPIC -m32
+ifeq ($(DEBUG),1)
+BUILD_TYPE = Debug
+LUAMOD_VERSION := 0.1-dev-$(LUAMOD_VERSION_GIT)
+BASE_CFLAGS = -g -DDEBUG -Dlinux -D__linux__ -D__USE_GNU -std=gnu++11 -shared -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\"
+else
+BUILD_TYPE = Release
+LUAMOD_VERSION := 0.1-release-$(LUAMOD_VERSION_GIT)
+BASE_CFLAGS = -DNDEBUG -Dlinux -D__linux__ -D__USE_GNU -std=gnu++11 -shared -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\"
+endif
 
-INCLUDE = -I. -I./src -I$(HLSDK)/common -I$(HLSDK)/dlls -I$(HLSDK)/engine \
+DLL_SRCDIR=src
+
+DLL_OBJDIR=$(BUILD_TYPE)/obj
+
+OPT_CFLAGS = -O3 -msse3 -flto -funroll-loops -fomit-frame-pointer -fno-stack-protector -fPIC -m32
+
+CFLAGS = $(BASE_CFLAGS) $(OPT_CFLAGS)
+
+ifeq ($(REHLDS_SUPPORT),1)
+CFLAGS += -DREHLDS_SUPPORT
+endif
+
+INCLUDE=-I. -I./src -I$(HLSDK)/common -I$(HLSDK)/dlls -I$(HLSDK)/engine \
 		-I$(HLSDK)/game_shared -I$(HLSDK)/pm_shared -I$(HLSDK)/public -I$(METAMOD)
 
-BIN_DIR = Release
-CFLAGS = $(OPT_FLAGS)
+LDFLAGS=-L ./lua -llua
 
-CFLAGS += -g -DNDEBUG -Dlinux -D__linux__ -D__USE_GNU -std=gnu++11 -shared
+SHLIBEXT=so
 
-OBJ_LINUX := $(OBJECTS:%.c=$(BIN_DIR)/%.o)
+#DO_CC=$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
+#DO_CXX=$(CXX) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
-$(BIN_DIR)/src/%.o: %.c
-	$(COMPILER) $(INCLUDE) $(CFLAGS) -o $@ -c $<
+$(DLL_OBJDIR)/%.o: $(DLL_SRCDIR)/%.cpp
+#	$(DO_CXX)
+	$(CXX) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
-all:
-	mkdir -p $(BIN_DIR)
+OBJ = \
+$(DLL_OBJDIR)/public.o \
+$(DLL_OBJDIR)/callbacks.o \
+$(DLL_OBJDIR)/dllapi.o \
+$(DLL_OBJDIR)/engine_api.o \
+$(DLL_OBJDIR)/ex_rehlds_api.o \
+$(DLL_OBJDIR)/luamod_utils.o \
+$(DLL_OBJDIR)/h_export.o \
+$(DLL_OBJDIR)/lua_functions.o \
+$(DLL_OBJDIR)/meta_api.o \
+$(DLL_OBJDIR)/lua/CLuaWorker.o \
+$(DLL_OBJDIR)/lua/commands.o \
+$(DLL_OBJDIR)/lua/lu_output.o \
+$(DLL_OBJDIR)/lua/lu_offset.o \
+$(DLL_OBJDIR)/lua/lu_engfuncs.o \
+$(DLL_OBJDIR)/lua/luaapi.o
 
-	$(MAKE) $(NAME) && strip -x $(BIN_DIR)/$(NAME)_mm_i386.so
+$(DLLNAME)_$(ARCH).$(SHLIBEXT) : neat $(OBJ)
+	$(CXX) $(CFLAGS) $(OBJ) $(LDFLAGS) -o $(BUILD_TYPE)/$@
 
-$(NAME): $(OBJ_LINUX)
-	$(COMPILER) $(INCLUDE) $(CFLAGS) $(OBJ_LINUX) $(LINK) -o$(BIN_DIR)/$(NAME)_mm_i386.so
-
-check:
-	cppcheck $(INCLUDE) --quiet --max-configs=100 -D__linux__ -DNDEBUG .
-
-debug:
-	$(MAKE) all DEBUG=false
-
-default: all
+neat:
+	-mkdir -p $(BUILD_TYPE)
+	-mkdir -p $(DLL_OBJDIR)
+	-mkdir -p $(DLL_OBJDIR)/lua/
 
 clean:
-	rm -rf Release/*.o
-	rm -rf Release/$(NAME)_mm_i386.so
+	-rm -f $(OBJ)
+	-rm -f $(BUILD_TYPE)/$(DLLNAME)_$(ARCH).$(SHLIBEXT)
+
+dirclean:
+	-rm -r Debug Release

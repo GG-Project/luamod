@@ -2,7 +2,6 @@
 #include <meta_api.h>
 #include "ex_rehlds_api.h"
 #include "lua/CLuaWorker.hpp"
-#define LUAMOD_VERSION "0.1"
 
 meta_globals_t *gpMetaGlobals;
 gamedll_funcs_t *gpGamedllFuncs;

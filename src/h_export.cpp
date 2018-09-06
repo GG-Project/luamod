@@ -2,6 +2,7 @@
 #include <extdll.h>
 #include <meta_api.h>
 #include "luamod_utils.hpp"
+#include "lua/luaconf.h"
 
 enginefuncs_t g_engfuncs;
 globalvars_t *gpGlobals;
@@ -19,6 +20,8 @@ C_DLLEXPORT void WINAPI GiveFnptrsToDll(enginefuncs_t *pengfuncsFromEngine, glob
     int pos = 0;
 
     (*g_engfuncs.pfnGetGameDir)(game_dir);
+    
+    ALERT(at_console, "[LM] Welcome to LuaMod version %s\n", LUAMOD_VERSION);
 
     if (strstr(game_dir, "/")) {
         pos = strlen(game_dir) - 1;
