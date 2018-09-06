@@ -21,7 +21,7 @@ C_DLLEXPORT void WINAPI GiveFnptrsToDll(enginefuncs_t *pengfuncsFromEngine, glob
 
     (*g_engfuncs.pfnGetGameDir)(game_dir);
     
-    ALERT(at_console, "[LM] Welcome to LuaMod version %s\n", LUAMOD_VERSION);
+    ALERT(at_console, "[LM] LuaMod version %s\n", LUAMOD_VERSION);
 
     if (strstr(game_dir, "/")) {
         pos = strlen(game_dir) - 1;
