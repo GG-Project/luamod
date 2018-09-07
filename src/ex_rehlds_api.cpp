@@ -63,7 +63,7 @@ bool meta_init_rehlds_api() {
 #else
     CSysModule* engineModule = Sys_LoadModule("engine_i486.so");
     if (!rehlds_api_try_init(engineModule, failReason)) {
-                gpMetaUtilFuncs->pfnLogConsole(PLID, "%s", failReason);
+        gpMetaUtilFuncs->pfnLogConsole(PLID, "%s", failReason);
         return false;
     }
 #endif
