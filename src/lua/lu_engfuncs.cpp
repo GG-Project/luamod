@@ -1,10 +1,11 @@
 #include "lu_engfuncs.hpp"
+#include <vector>
 #include <extdll.h>
 #include <meta_api.h>
+
 #ifdef REHLDS_SUPPORT
 #include "ex_rehlds_api.h"
 #endif
-#include <vector>
 
 /*
 int			(*pfnPrecacheModel)			(char* s);
@@ -186,6 +187,22 @@ int lu_engfuncs::l_pfnClientCommand(lua_State *L) {
 }
 
 int lu_engfuncs::l_pfnClientPrintf(lua_State *L) {
-    CLIENT_PRINTF((edict_t*) lua_touserdata(L, 1), print_center, luaL_checkstring(L, 2));
+    
+    PRINT_TYPE ptype;
+    
+    int i = luaL_checkinteger(L, 2);
+    
+    if( i < 0 || i > 3) luaL_error(L, "Print type invalid");
+    
+    switch (i) {
+            case 1:
+                ptype = print_console;
+            case 2:
+                ptype = print_center;
+            case 3:
+                ptype = print_chat;
+    }
+    
+    CLIENT_PRINTF((edict_t*) lua_touserdata(L, 1), ptype, luaL_checkstring(L, 3));
     return 1;
 }

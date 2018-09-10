@@ -1,7 +1,9 @@
 #include <string.h>
 #include <extdll.h>
 #include <meta_api.h>
-#include "luamod_utils.hpp"
+#include "luamod.h"
+#include "luamod_utils.h"
+#include "commands_luamod.h"
 #include "lua/luaconf.h"
 
 enginefuncs_t g_engfuncs;
@@ -22,6 +24,8 @@ C_DLLEXPORT void WINAPI GiveFnptrsToDll(enginefuncs_t *pengfuncsFromEngine, glob
     (*g_engfuncs.pfnGetGameDir)(game_dir);
     
     ALERT(at_console, "[LM] LuaMod version %s\n", LUAMOD_VERSION);
+    
+    (*g_engfuncs.pfnAddServerCommand)("luamod", LuaMod_COMMAND);
 
     if (strstr(game_dir, "/")) {
         pos = strlen(game_dir) - 1;
@@ -35,5 +39,5 @@ C_DLLEXPORT void WINAPI GiveFnptrsToDll(enginefuncs_t *pengfuncsFromEngine, glob
         pos++;
     }
     strncpy(mod_name, &game_dir[pos], sizeof(mod_name));
-    luamod_utils::SetModName(mod_name);
+    UTIL_SET_MOD_PATH(mod_name);
 }

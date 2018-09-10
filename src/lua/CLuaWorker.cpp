@@ -7,11 +7,12 @@
 //
 
 #include "CLuaWorker.hpp"
+#include "../luamod_utils.h"
 #include <extdll.h>
 #include <meta_api.h>
 #include <string>
 #include <stdexcept>
-#include <luamod_utils.hpp>
+#include <luamod_utils.h>
 
 CLuaWorker *g_luaworker;
 
@@ -22,7 +23,7 @@ CLuaWorker::CLuaWorker() {
         state = luaL_newstate();
         loadLuaApi(state);
         char buffer[32], filename[256];
-        luamod_utils::GetModName(buffer);
+        UTIL_GET_MOD_PATH(buffer);
         ALERT(at_console, "[LM] Mod path : %s\n", buffer);
         sprintf(filename, "%s/addons/luamod/core/init.lua", buffer);
         if (luaL_loadfile(state, filename)) throw std::runtime_error(lua_tostring(state, -1));

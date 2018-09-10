@@ -1,8 +1,10 @@
 #include <extdll.h>
 #include <meta_api.h>
 #include "luai.h"
-#include "lu_offset.h"
+
+#include "lu_luamod.h"
 #include "lu_output.h"
+#include "lu_offset.h"
 #include "lu_engfuncs.hpp"
 
 void loadLuaApi(lua_State *L) {
