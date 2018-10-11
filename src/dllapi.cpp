@@ -3,7 +3,7 @@
 #include "callbacks.h"
 
 DLL_FUNCTIONS g_DllFunctionTable = {
-    NULL, // pfnGameInit
+    GameDLLInit, // pfnGameInit
     NULL, // pfnSpawn
     NULL, // pfnThink
     NULL, // pfnUse
@@ -18,9 +18,9 @@ DLL_FUNCTIONS g_DllFunctionTable = {
     NULL, // pfnSaveGlobalState
     NULL, // pfnRestoreGlobalState
     NULL, // pfnResetGlobalState
-    NULL, // pfnClientConnect
-    NULL, // pfnClientDisconnect
-    NULL, // pfnClientKill
+    pfnClientConnect, // pfnClientConnect
+    pfnClientDisconnect, // pfnClientDisconnect
+    pfnClientKill, // pfnClientKill
     pfnClientPutInServer, // pfnClientPutInServer
     pfnClientCommand, // pfnClientCommand
     NULL, // pfnClientUserInfoChanged

@@ -2,12 +2,27 @@
 #include <extdll.h>
 #include <meta_api.h>
 #include "luamod.h"
-#include "luamod_utils.h"
+#include "utils.h"
 #include "commands_luamod.h"
-#include "lua/luaconf.h"
+#include "luai.h"
+
+char MOD_PATH[32];
+
+extern bool g_meta_init;
+
+#ifdef XASH3D
+#include "port.h"
+#endif
 
 enginefuncs_t g_engfuncs;
 globalvars_t *gpGlobals;
+
+#if 0
+GETENTITYAPI other_GetEntityAPI;
+GIVEFNPTRSTODLL other_GiveFnptrsToDll;
+GETNEWDLLFUNCTIONS other_GetNewDLLFunctions;
+HINSTANCE h_Library = NULL;
+#endif
 
 // Receive engine function table from engine.
 // This appears to be the _first_ DLL routine called by the engine, so we
@@ -17,7 +32,7 @@ C_DLLEXPORT void WINAPI GiveFnptrsToDll(enginefuncs_t *pengfuncsFromEngine, glob
     memcpy(&g_engfuncs, pengfuncsFromEngine, sizeof (enginefuncs_t));
     gpGlobals = pGlobals;
 
-    char game_dir[256], mod_name[32];
+    char game_dir[256];
 
     int pos = 0;
 
@@ -38,6 +53,35 @@ C_DLLEXPORT void WINAPI GiveFnptrsToDll(enginefuncs_t *pengfuncsFromEngine, glob
 
         pos++;
     }
-    strncpy(mod_name, &game_dir[pos], sizeof(mod_name));
-    UTIL_SET_MOD_PATH(mod_name);
+    strncpy(MOD_PATH, &game_dir[pos], sizeof(MOD_PATH));
+
+    if(g_meta_init)
+       ALERT(at_console, "[LM] Metamod api init\n"); 
+    
+#if 0
+
+const char *filePath = "valve/dlls/hl.so";
+
+TEST other_pfnGetGameDescription = NULL;
+
+h_Library = LoadLibrary( filePath );
+
+                if (h_Library == NULL) {        // Directory error or Unsupported MOD!
+                        ALERT(at_console, "MOD Dll not found (or unsupported MOD)!" );
+                        // debugFile( "Library = 0\n" );
+                }
+
+
+                other_GetEntityAPI = (GETENTITYAPI)GetProcAddress( h_Library, "GetEntityAPI" );
+                if (other_GetEntityAPI == NULL) ALERT(at_console, "[LM] Can't get MOD's GetEntityAPI!\n" );
+
+                other_GiveFnptrsToDll = (GIVEFNPTRSTODLL)GetProcAddress(h_Library, "GiveFnptrsToDll");
+                if (other_GiveFnptrsToDll == NULL) ALERT(at_console, "[LM] Can't get MOD's GiveFnptrsToDll!\n" );
+		
+		(*other_GiveFnptrsToDll)(pengfuncsFromEngine, pGlobals);
+                
+                //other_pfnGetGameDescription = (TEST)GetProcAddress(h_Library, "pfnGetGameDescription");
+                
+    //ALERT(at_console, "[LM] LuaMod Mod %s", other_pfnGetGameDescription);
+#endif
 }

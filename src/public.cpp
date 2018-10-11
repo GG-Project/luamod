@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <string.h>
-#include "compiler.h"
 
-#ifdef GOLDSRC
+#ifdef GOLDSRC_PRIVATE
 #include "sys_shared.cpp"
 #include "interface.cpp"
 #endif

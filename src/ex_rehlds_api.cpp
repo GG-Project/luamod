@@ -3,7 +3,6 @@
 #include <meta_api.h>
 #include "ex_rehlds_api.h"
 
-
 IRehldsApi* g_RehldsApi;
 const RehldsFuncs_t* g_RehldsFuncs;
 IRehldsHookchains* g_RehldsHookchains;
@@ -49,7 +48,7 @@ bool rehlds_api_try_init(CSysModule* engineModule, char* failureReason) {
 }
 
 bool meta_init_rehlds_api() {
-    char failReason[2048];
+    char failReason[128];
 
 #ifdef WIN32
     CSysModule* engineModule = Sys_LoadModule("swds.dll");

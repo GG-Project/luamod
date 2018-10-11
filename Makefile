@@ -1,8 +1,8 @@
-# LuaMod makefile based on hlsdk 2.3 makefile
-
 HLSDK = include/hlsdk
 HLSDK_XASH3D = include/hlsdk-xash3d
 METAMOD = include/metamod
+
+OS = Linux
 
 DLL_SRCDIR=src
 
@@ -10,96 +10,103 @@ DLL_OBJDIR=$(BUILD_TYPE)/obj
 
 DLLNAME=luamod_mm
 
+LUAMOD_PATCH = unstable-devel
+
+LUAMOD_VERMAIN = 0.3-beta
+
 CC?=gcc
 CXX?=g++
+
+ifeq ($(CLANG), 1)
+CC=clang
+CXX=clang++
+endif
+
+COMPILER_VER_CC = $(shell $(CC) -dumpversion)
+COMPILER_VER_CXX = $(shell $(CC) -dumpversion)
 
 OPT_CFLAGS = -O3 -flto -funroll-loops -fomit-frame-pointer -fno-stack-protector -fPIC
 
 ARCH=$(shell uname -m)
 
 LUAMOD_COMMIT := $(firstword $(shell git rev-parse --short=6 HEAD) unknown)
+	
+ifeq ($(ARCH), x86_64)
+ARCH = i686
+ARCH_CFLAGS +=-m32 -msse3 -march=i686 -mtune=generic
+else ifeq ($(ARCH), aarch64)
+ARCH_CFLAGS += 
+#ARCH = ARCH_UNAME
+XASH3D = 1
+else ifeq (, $(findstring arm,$(ARCH_UNAME)))
+ARCH_CFLAGS += 
+#ARCH = ARCH_UNAME
+XASH3D = 1
+endif
 
 ifeq ($(DEBUG),1)
-BUILD_TYPE = Debug
-LUAMOD_VERSION := 0.2-debug-$(LUAMOD_COMMIT)
-BASE_CFLAGS = -g -DDEBUG -Dlinux -D__linux__ -D__USE_GNU -std=gnu++11 -shared -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\" -DLUAMOD_ARCH=\"$(ARCH)\"
+BUILD_TYPE = debug
+BASE_CFLAGS = -g -DDEBUG -D__USE_GNU -std=gnu++11 -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\" -DLUAMOD_PATCH=\"$(LUAMOD_PATCH)\" -DLUAMOD_COMPILER_VER=\"$(COMPILER_VER_CXX)\" -DLUAMOD_COMPILER=\"$(CXX)\" 
 else
-BUILD_TYPE = Release
-LUAMOD_VERSION := 0.2-release-$(LUAMOD_COMMIT)
-BASE_CFLAGS = -DNDEBUG -Dlinux -D__linux__ -D__USE_GNU -std=gnu++11 -shared -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\" -DLUAMOD_ARCH=\"$(ARCH)\"
+BUILD_TYPE = release
+BASE_CFLAGS = -DNDEBUG -D__USE_GNU -std=gnu++11 -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\" -DLUAMOD_PATCH=\"$(LUAMOD_PATCH)\"
 endif
 
-CFLAGS = $(BASE_CFLAGS) $(OPT_CFLAGS)
-
-ifeq ($(ARCH), x86_64)
-ARCH = i386
-CFLAGS +=-m32 -msse3
-else ifeq ($(ARCH), aarch64)
-CFLAGS +=
-XASH3D = 1
-else ifeq ($(ARCH), armv7)
-CFLAGS +=
-XASH3D = 1
-endif
+LUAMOD_VERSION := $(LUAMOD_VERMAIN)-$(BUILD_TYPE)-$(LUAMOD_COMMIT)
+DLL_OBJDIR=$(BUILD_TYPE).os.$(ARCH)
 
 ifeq ($(XASH3D), 1)
-CFLAGS += -DXASH3D
+BASE_CFLAGS += -DXASH3D
 HLSDK = $(HLSDK_XASH3D)
 endif
 
-#если нужен совместимый с rehlds и goldsrc + xash3d но только под платформу i386
-#Нужно собирать без XASH3D=1
 ifeq ($(REHLDS_SUPPORT),1)
 ifeq ($(XASH3D), 1)
-$(error "XASH3D != REHLDS!!!!")
+$(error "REHLDS not work with XASH3D headers!!!!")
 else
-CFLAGS += -DREHLDS_SUPPORT
+BASE_CFLAGS += -DREHLDS_SUPPORT
 endif
 endif
+
+CFLAGS = $(BASE_CFLAGS) $(OPT_CFLAGS) $(ARCH_CFLAGS)
 
 INCLUDE=-I. -I./src -I$(HLSDK)/common -I$(HLSDK)/dlls -I$(HLSDK)/engine \
 		-I$(HLSDK)/game_shared -I$(HLSDK)/pm_shared -I$(HLSDK)/public -I$(METAMOD)
+	
+LDFLAGS=-L ./lua -llua -shared
 
-LDFLAGS=-L ./lua -llua
+# LDFLAGS=-L ./luajit/src -lluajit -lpthread -shared
 
 SHLIBEXT=so
 
-#DO_CC=$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
+DO_CC=$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
+
 DO_CXX=$(CXX) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
 $(DLL_OBJDIR)/%.o: $(DLL_SRCDIR)/%.cpp
 	$(DO_CXX)
 
-OBJ = \
-$(DLL_OBJDIR)/public.o \
-$(DLL_OBJDIR)/callbacks.o \
-$(DLL_OBJDIR)/dllapi.o \
-$(DLL_OBJDIR)/engine_api.o \
-$(DLL_OBJDIR)/ex_rehlds_api.o \
-$(DLL_OBJDIR)/luamod_utils.o \
-$(DLL_OBJDIR)/commands_luamod.o \
-$(DLL_OBJDIR)/h_export.o \
-$(DLL_OBJDIR)/lua_functions.o \
-$(DLL_OBJDIR)/meta_api.o \
-$(DLL_OBJDIR)/lua/CLuaWorker.o \
-$(DLL_OBJDIR)/lua/commands.o \
-$(DLL_OBJDIR)/lua/lu_luamod.o \
-$(DLL_OBJDIR)/lua/lu_output.o \
-$(DLL_OBJDIR)/lua/lu_offset.o \
-$(DLL_OBJDIR)/lua/lu_engfuncs.o \
-$(DLL_OBJDIR)/lua/luaapi.o
+SRC = $(wildcard src/*.cpp) $(wildcard src/lua/*.cpp)
 
-$(DLLNAME)_$(ARCH).$(SHLIBEXT) : neat $(OBJ)
-	$(CXX) $(CFLAGS) $(OBJ) $(LDFLAGS) -o $(BUILD_TYPE)/$@
+OBJ := $(SRC:$(DLL_SRCDIR)/%.cpp=$(DLL_OBJDIR)/%.o)
+
+$(DLLNAME)_$(ARCH).$(SHLIBEXT) : neat depend $(OBJ)	
+	$(CXX) $(CFLAGS) $(OBJ) $(LDFLAGS) -o $(DLL_OBJDIR)/$@
 
 neat:
-	-mkdir -p $(BUILD_TYPE)
-	-mkdir -p $(DLL_OBJDIR)
-	-mkdir -p $(DLL_OBJDIR)/lua/
+	@mkdir -p $(DLL_OBJDIR)
+	@mkdir -p $(DLL_OBJDIR)/lua/
 
-clean:
+$(DLL_OBJDIR): neat
+
+clean: depend
 	-rm -f $(OBJ)
-	-rm -f $(BUILD_TYPE)/$(DLLNAME)_$(ARCH).$(SHLIBEXT)
+	-rm -f $(DLL_OBJDIR)/$(DLLNAME)_$(ARCH).$(SHLIBEXT)
+	-rm -f $(DLL_OBJDIR)/Rules.depend
 
-dirclean:
-	-rm -r Debug Release
+depend: $(DLL_OBJDIR)/Rules.depend
+	
+$(DLL_OBJDIR)/Rules.depend: $(SRCFILES) $(DLL_OBJDIR)
+	$(CXX) -MM $(INCLUDE) $(SRC) $(CFLAGS) | sed "s;\(^[^         ]*\):\(.*\);$(DLL_OBJDIR)/\1:\2;" > $@
+
+include $(DLL_OBJDIR)/Rules.depend

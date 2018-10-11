@@ -8,9 +8,15 @@
 #endif
 
 /*
-int			(*pfnPrecacheModel)			(char* s);
-int			(*pfnPrecacheSound)			(char* s);
-int			(*pfnPrecacheGeneric)		(char* s);
+int		(*pfnPrecacheModel)		(char* s);
+int		(*pfnPrecacheSound)		(char* s);
+int		(*pfnPrecacheGeneric)		(char* s);
+ */
+
+/*
+void		(*pfnServerCommand)			(const char* str);
+void		(*pfnServerExecute)			(void);
+void		(*pfnClientCommand)			(edict_t* pEdict, const char* szFmt, ...);
  */
 
 /*
@@ -36,17 +42,17 @@ cvar_t		(*pfnCVarGetPointer)		(const char *szVarName);
  */
 
 /*
-void		(*pfnClientCommand)			(edict_t* pEdict, const char* szFmt, ...);
- */
-
-/*
 void		(*pfnClientPrintf)			( edict_t* pEdict, PRINT_TYPE ptype, const char *szMsg );
  */
 
 void lu_engfuncs::init_api(lua_State *L) {
     lua_register(L, "precache_model", l_pfnPrecacheModel);
     lua_register(L, "precache_sound", l_pfnPrecacheSound);
-    lua_register(L, "precache_generic", l_pfnPrecacheGeneric);
+    //lua_register(L, "precache_generic", l_pfnPrecacheGeneric);
+    //
+    lua_register(L, "server_command", l_pfnServerCommand);
+    lua_register(L, "server_execute", l_pfnServerExecute);
+    lua_register(L, "client_command", l_pfnClientCommand);
     //
     lua_register(L, "message_begin", l_pfnMessageBegin);
     lua_register(L, "message_end", l_pfnMessageEnd);
@@ -65,7 +71,6 @@ void lu_engfuncs::init_api(lua_State *L) {
     lua_register(L, "cvar_set_float", l_pfnCVarSetFloat);
     lua_register(L, "cvar_set_string", l_pfnCVarSetString);
     //
-    lua_register(L, "client_command", l_pfnClientCommand);
     lua_register(L, "client_printf", l_pfnClientPrintf);
     //
     #ifdef REHLDS_SUPPORT
@@ -75,18 +80,37 @@ void lu_engfuncs::init_api(lua_State *L) {
 
 int lu_engfuncs::l_pfnPrecacheModel(lua_State *L) {
     PRECACHE_MODEL(luaL_checkstring(L, 1));
-    return 1;
+    return 0;
 }
 
 int lu_engfuncs::l_pfnPrecacheSound(lua_State *L) {
     PRECACHE_SOUND(luaL_checkstring(L, 1));
-    return 1;
+    return 0;
+}
+/*TODO: Удалить*/
+//int lu_engfuncs::l_pfnPrecacheGeneric(lua_State *L) {
+    // luaL_error(L, "SV_PrecacheGeneric: ( %s ). Precache can only be done in spawn functions.", luaL_checkstring(L, 1));
+    //	PRECACHE_GENERIC(luaL_checkstring(L, 1));
+    //return 1;
+//}
+
+int lu_engfuncs::l_pfnServerCommand(lua_State *L)
+{
+    char buff[256];
+    snprintf(buff, 256,"%s\n", luaL_checkstring(L,1));
+    SERVER_COMMAND(buff);
+    return 0;
 }
 
-int lu_engfuncs::l_pfnPrecacheGeneric(lua_State *L) {
-    luaL_error(L, "SV_PrecacheGeneric: ( %s ). Precache can only be done in spawn functions.", luaL_checkstring(L, 1));
-    //	PRECACHE_GENERIC(luaL_checkstring(L, 1));
-    return 1;
+int lu_engfuncs::l_pfnServerExecute(lua_State *L)
+{
+    SERVER_EXECUTE();
+    return 0;
+}
+
+int lu_engfuncs::l_pfnClientCommand(lua_State *L) {
+    CLIENT_COMMAND((edict_t*) lua_touserdata(L, 1), "%s\n", luaL_checkstring(L, 2));
+    return 0;
 }
 
 int lu_engfuncs::l_pfnMessageBegin(lua_State *L) {
@@ -173,17 +197,12 @@ int lu_engfuncs::l_pfnCVarGetString(lua_State *L) {
 
 int lu_engfuncs::l_pfnCVarSetFloat(lua_State *L) {
     CVAR_SET_FLOAT(luaL_checkstring(L, 1), luaL_checknumber(L, 2));
-    return 1;
+    return 0;
 }
 
 int lu_engfuncs::l_pfnCVarSetString(lua_State *L) {
     CVAR_SET_STRING(luaL_checkstring(L, 1), luaL_checkstring(L, 2));
-    return 1;
-}
-
-int lu_engfuncs::l_pfnClientCommand(lua_State *L) {
-    CLIENT_COMMAND((edict_t*) lua_touserdata(L, 1), "%s\n", luaL_checkstring(L, 2));
-    return 1;
+    return 0;
 }
 
 int lu_engfuncs::l_pfnClientPrintf(lua_State *L) {
@@ -204,5 +223,5 @@ int lu_engfuncs::l_pfnClientPrintf(lua_State *L) {
     }
     
     CLIENT_PRINTF((edict_t*) lua_touserdata(L, 1), ptype, luaL_checkstring(L, 3));
-    return 1;
+    return 0;
 }

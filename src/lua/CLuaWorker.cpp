@@ -7,12 +7,14 @@
 //
 
 #include "CLuaWorker.hpp"
-#include "../luamod_utils.h"
 #include <extdll.h>
 #include <meta_api.h>
 #include <string>
 #include <stdexcept>
-#include <luamod_utils.h>
+#include <utils.h>
+#include <luai.h>
+
+extern char MOD_PATH[32];
 
 CLuaWorker *g_luaworker;
 
@@ -22,10 +24,9 @@ CLuaWorker::CLuaWorker() {
     try {
         state = luaL_newstate();
         loadLuaApi(state);
-        char buffer[32], filename[256];
-        UTIL_GET_MOD_PATH(buffer);
-        ALERT(at_console, "[LM] Mod path : %s\n", buffer);
-        sprintf(filename, "%s/addons/luamod/core/init.lua", buffer);
+        char filename[256];
+        ALERT(at_console, "[LM] Mod path : %s\n", MOD_PATH);
+        snprintf(filename, sizeof(filename), "%s/addons/luamod/core/init.lua", MOD_PATH);
         if (luaL_loadfile(state, filename)) throw std::runtime_error(lua_tostring(state, -1));
         if (lua_pcall(state, 0, LUA_MULTRET, 0)) throw std::runtime_error(lua_tostring(state, -1));
     } catch (std::runtime_error &err) {

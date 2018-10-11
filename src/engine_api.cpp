@@ -1,5 +1,5 @@
 #include <extdll.h>
-#include <meta_api.h>
+//#include <meta_api.h>
 #include "callbacks.h"
 
 enginefuncs_t g_EngineFunctionsTable = {

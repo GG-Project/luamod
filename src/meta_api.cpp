@@ -1,5 +1,6 @@
 #include <extdll.h>
 #include <meta_api.h>
+#include "luamod.h"
 #include "ex_rehlds_api.h"
 #include "lua/CLuaWorker.hpp"
 
@@ -7,6 +8,8 @@ meta_globals_t *gpMetaGlobals;
 gamedll_funcs_t *gpGamedllFuncs;
 mutil_funcs_t *gpMetaUtilFuncs;
 enginefuncs_t *g_pengfuncsTable;
+
+bool g_meta_init = FALSE;
 
 plugin_info_t Plugin_info = {
     META_INTERFACE_VERSION, // ifvers
@@ -19,6 +22,10 @@ plugin_info_t Plugin_info = {
     PT_ANYTIME, // (when) loadable
     PT_ANYTIME, // (when) unloadable
 };
+
+void Meta_Init(void) {
+    g_meta_init = TRUE;
+}
 
 C_DLLEXPORT int Meta_Query(char *interfaceVersion, plugin_info_t **plinfo, mutil_funcs_t *pMetaUtilFuncs) {
     *plinfo = &Plugin_info;
