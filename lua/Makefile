@@ -10,13 +10,16 @@ ARCH=$(shell uname -m)
 
 ifeq ($(ARCH), x86_64)
 ARCH_CFLAGS +=-m32 -msse3 -march=i686 -mtune=generic
+SYSLIBS +=-m32 -msse3 -march=i686 -mtune=generic
 else ifeq ($(ARCH), aarch64)
 ARCH_CFLAGS +=
+SYSLIBS +=
 else ifeq (, $(findstring arm,$(ARCH_UNAME)))
 ARCH_CFLAGS +=
+SYSLIBS +=
 endif
 
-CC= gcc -std=gnu99 -fPIC  -m32
+CC= gcc -std=gnu99 -fPIC
 CFLAGS= -O2 -Wall $(ARCH_CFLAGS) -Wextra -DLUA_COMPAT_5_2 $(SYSCFLAGS) $(MYCFLAGS)
 LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS)
 LIBS= -lm $(SYSLIBS) $(MYLIBS)
@@ -52,8 +55,8 @@ LUA_O=	lua.o
 LUAC_T=	luac
 LUAC_O=	luac.o
 
-ALL_O= $(BASE_O) $(LUA_O) $(LUAC_O)
-ALL_T= $(LUA_A) $(LUA_T) $(LUAC_T)
+ALL_O= $(BASE_O) $(LUA_O)
+ALL_T= $(LUA_A)
 ALL_A= $(LUA_A)
 
 # Targets start here.
@@ -112,15 +115,15 @@ c89:
 
 
 freebsd:
-	$(MAKE) $(ALL) SYSCFLAGS="-DLUA_USE_LINUX" SYSLIBS="-Wl,-E -lreadline"
+	$(MAKE) $(ALL) SYSCFLAGS="-DLUA_USE_LINUX" SYSLIBS="-Wl,-E"
 
 generic: $(ALL)
 
 linux:
-	$(MAKE) $(ALL) SYSCFLAGS="-DLUA_USE_LINUX" SYSLIBS="-Wl,-E -ldl -lreadline -m32"
+	$(MAKE) $(ALL) SYSCFLAGS="-DLUA_USE_LINUX" SYSLIBS="-Wl,-E -ldl"
 
 macosx:
-	$(MAKE) $(ALL) SYSCFLAGS="-DLUA_USE_MACOSX" SYSLIBS="-lreadline" CC=cc
+	$(MAKE) $(ALL) SYSCFLAGS="-DLUA_USE_MACOSX" SYSLIBS="" CC=cc
 
 mingw:
 	$(MAKE) "LUA_A=lua53.dll" "LUA_T=lua.exe" \
