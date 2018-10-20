@@ -6,8 +6,18 @@
 # Your platform. See PLATS for possible values.
 PLAT= none
 
+ARCH=$(shell uname -m)
+
+ifeq ($(ARCH), x86_64)
+ARCH_CFLAGS +=-m32 -msse3 -march=i686 -mtune=generic
+else ifeq ($(ARCH), aarch64)
+ARCH_CFLAGS +=
+else ifeq (, $(findstring arm,$(ARCH_UNAME)))
+ARCH_CFLAGS +=
+endif
+
 CC= gcc -std=gnu99 -fPIC  -m32
-CFLAGS= -O2 -Wall -Wextra -DLUA_COMPAT_5_2 $(SYSCFLAGS) $(MYCFLAGS)
+CFLAGS= -O2 -Wall $(ARCH_CFLAGS) -Wextra -DLUA_COMPAT_5_2 $(SYSCFLAGS) $(MYCFLAGS)
 LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS)
 LIBS= -lm $(SYSLIBS) $(MYLIBS)
 
