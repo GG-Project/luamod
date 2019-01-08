@@ -5,7 +5,7 @@ const char *LM_buildarch (void) {
 
 #if defined( __x86_64__) || defined(_M_X64)
     arch = "amd64";
-#warning This Arch not supported yet!!!!
+#warning This arch not supported yet!!!!
 #elif defined(__i386__) || defined(_X86_) || defined(_M_IX86)
     arch = "i386";
 #elif defined __aarch64__
@@ -57,7 +57,7 @@ const char *LM_buildhlsdk (void) {
     const char *headers;
 
 #if defined( XASH3D )
-    headers = "xash3d-hlsdk";
+    headers = "hlsdk-xash3d";
 #elif defined( GOLDSRC_PRIVATE )
     headers = "hlsdk";
 #else
@@ -77,3 +77,41 @@ const char *LM_buildversion (void)
 #endif
     return version;
 }
+
+#include <lua.h>
+
+const char *LM_buildlua(void)
+{
+    const char *version;
+    version = LUA_VERSION;
+    return version;
+}
+
+#ifdef DEBUG
+const char *LM_buildcompiler(void)
+{
+    const char *compiler;
+#if defined(__GNUC__)
+    compiler = "g++";
+#elif defined( __clang__)
+    compiler = "clang++";
+#elif defined(_MSC_VER)
+    compiler = "mscv ? what ??";
+#else
+    compiler = "unknown"
+#endif
+    return compiler;
+}
+
+const char *LM_buildcompilerversion(void)
+{
+    const char *version;
+
+#if defined (__GNUC__) || defined (__clang__)
+    version = __VERSION__;
+#else
+    version = "unknown";
+#endif
+    return version;
+}
+#endif

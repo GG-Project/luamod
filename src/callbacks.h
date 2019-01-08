@@ -11,5 +11,11 @@ void pfnClientDisconnect(edict_t *pEntity);
 void pfnClientCommand(edict_t* ed);
 void pfnClientKill(edict_t* ed);
 void pfnClientPutInServer(edict_t* ed);
+void pfnClientUserInfoChanged(edict_t *pEntity, char *pszInfoBuffer);
 //
 void pfnServerCommand(const char* str);
+
+//new api's
+
+void pfnCvarValue(const edict_t *pEnt, const char *pszValue);
+void pfnCvarValue2(const edict_t *pEnt, int requestID, const char *pszCvarName, const char *pszValue);

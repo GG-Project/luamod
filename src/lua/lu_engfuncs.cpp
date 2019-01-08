@@ -2,6 +2,7 @@
 #include <vector>
 #include <extdll.h>
 #include <meta_api.h>
+#include <utils.h>
 
 #ifdef REHLDS_SUPPORT
 #include "ex_rehlds_api.h"
@@ -10,7 +11,7 @@
 /*
 int		(*pfnPrecacheModel)		(char* s);
 int		(*pfnPrecacheSound)		(char* s);
-int		(*pfnPrecacheGeneric)		(char* s);
+int		(*pfnPrecacheGeneric)	(char* s);
  */
 
 /*
@@ -42,13 +43,16 @@ cvar_t		(*pfnCVarGetPointer)		(const char *szVarName);
  */
 
 /*
+int     	(*pfnRegUserMsg)            ( const char *pszName, int iSize );
+*/
+
+/*
 void		(*pfnClientPrintf)			( edict_t* pEdict, PRINT_TYPE ptype, const char *szMsg );
  */
 
 void lu_engfuncs::init_api(lua_State *L) {
     lua_register(L, "precache_model", l_pfnPrecacheModel);
     lua_register(L, "precache_sound", l_pfnPrecacheSound);
-    //lua_register(L, "precache_generic", l_pfnPrecacheGeneric);
     //
     lua_register(L, "server_command", l_pfnServerCommand);
     lua_register(L, "server_execute", l_pfnServerExecute);
@@ -71,6 +75,8 @@ void lu_engfuncs::init_api(lua_State *L) {
     lua_register(L, "cvar_set_float", l_pfnCVarSetFloat);
     lua_register(L, "cvar_set_string", l_pfnCVarSetString);
     //
+    lua_register(L, "reg_user_msg", l_pfnRegUserMsg);
+    //
     lua_register(L, "client_printf", l_pfnClientPrintf);
     //
     #ifdef REHLDS_SUPPORT
@@ -87,18 +93,10 @@ int lu_engfuncs::l_pfnPrecacheSound(lua_State *L) {
     PRECACHE_SOUND(luaL_checkstring(L, 1));
     return 0;
 }
-/*TODO: Удалить*/
-//int lu_engfuncs::l_pfnPrecacheGeneric(lua_State *L) {
-    // luaL_error(L, "SV_PrecacheGeneric: ( %s ). Precache can only be done in spawn functions.", luaL_checkstring(L, 1));
-    //	PRECACHE_GENERIC(luaL_checkstring(L, 1));
-    //return 1;
-//}
 
 int lu_engfuncs::l_pfnServerCommand(lua_State *L)
 {
-    char buff[256];
-    snprintf(buff, 256,"%s\n", luaL_checkstring(L,1));
-    SERVER_COMMAND(buff);
+    SERVER_COMMAND(va("%s\n", luaL_checkstring(L,1)));
     return 0;
 }
 
@@ -205,23 +203,15 @@ int lu_engfuncs::l_pfnCVarSetString(lua_State *L) {
     return 0;
 }
 
+int lu_engfuncs::l_pfnRegUserMsg(lua_State *L)
+{
+    lua_pushinteger(L, REG_USER_MSG(luaL_checkstring(L, 1), luaL_checkinteger(L, 2)));
+    return 1;
+}
+
 int lu_engfuncs::l_pfnClientPrintf(lua_State *L) {
-    
-    PRINT_TYPE ptype;
-    
-    int i = luaL_checkinteger(L, 2);
-    
-    if( i < 0 || i > 3) luaL_error(L, "Print type invalid");
-    
-    switch (i) {
-            case 1:
-                ptype = print_console;
-            case 2:
-                ptype = print_center;
-            case 3:
-                ptype = print_chat;
-    }
-    
-    CLIENT_PRINTF((edict_t*) lua_touserdata(L, 1), ptype, luaL_checkstring(L, 3));
+    int print_type = (int)luaL_checkinteger(L, 2);
+    if( print_type < 0 || print_type > 3) luaL_error(L, "Print type %i invalid!!!", print_type);
+    CLIENT_PRINTF((edict_t*) lua_touserdata(L, 1), (PRINT_TYPE) print_type, luaL_checkstring(L, 3));
     return 0;
 }

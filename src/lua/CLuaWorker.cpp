@@ -12,9 +12,10 @@
 #include <string>
 #include <stdexcept>
 #include <utils.h>
-#include <luai.h>
 
-extern char MOD_PATH[32];
+#include <zone_lua_alloc.h>
+
+#include <luamod.h>
 
 CLuaWorker *g_luaworker;
 
@@ -22,9 +23,12 @@ void loadLuaApi(lua_State *L);
 
 CLuaWorker::CLuaWorker() {
     try {
-        state = luaL_newstate();
+
+        //lua_setallocf(state, zone_lua_alloc, NULL);
+
+        state = lua_newstate(zone_lua_alloc, NULL);
         loadLuaApi(state);
-        char filename[256];
+        char filename[260];
         ALERT(at_console, "[LM] Mod path : %s\n", MOD_PATH);
         snprintf(filename, sizeof(filename), "%s/addons/luamod/core/init.lua", MOD_PATH);
         if (luaL_loadfile(state, filename)) throw std::runtime_error(lua_tostring(state, -1));

@@ -31,7 +31,7 @@ int lu_offset::l_set_offset_char(lua_State *L) {
     //   char* obj = (char*)lua_touserdata(L, 1);
     //   int offset = luaL_checkinteger(L, 2);
     //   const char* value = luaL_checkstring(L, 3);
-    //   (const char*)(obj + offset) = luaL_checkstring(L, 3);
+    //   (char*)(obj + offset) = luaL_checkstring(L, 3);
     return 0;
 }
 
@@ -53,22 +53,15 @@ int lu_offset::l_set_offset_float(lua_State *L) {
 int lu_offset::l_get_offset_int(lua_State *L) {
     char* obj = (char*) lua_touserdata(L, 1);
     int offset = luaL_checkinteger(L, 2);
-    //int value = *(int*) (obj + offset);
-    //ALERT(at_console, "[LM] GET_OFFSET_INT : %d, 0x%x\n", *(int*) (obj + offset), luaL_checkinteger(L, 2));
     lua_pushnumber(L, *(int*) (obj + offset));
     return 1;
 }
 
 int lu_offset::l_set_offset_int(lua_State *L) {
     char* obj = (char*) lua_touserdata(L, 1);
-    
-    //if(!obj)
-    //    luaL_error(L, "set_offset error : no input object!!"); return 0;
-
     int offset = luaL_checkinteger(L, 2);
     int value = luaL_checknumber(L, 3);
     *(int*) (obj + offset) = value;
-    ALERT(at_console, "[LM] SET_OFFSET_INT : %d, 0x%x\n", *(int*) (obj + offset), luaL_checkinteger(L, 2));
     return 0;
 }
 

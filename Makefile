@@ -1,6 +1,8 @@
 HLSDK = include/hlsdk
 HLSDK_XASH3D = include/hlsdk-xash3d
 METAMOD = include/metamod
+LUAMOD_API = include/luamod
+LUA = lua/
 
 OS = Linux
 
@@ -10,9 +12,9 @@ DLL_OBJDIR=$(BUILD_TYPE)/obj
 
 DLLNAME=luamod_mm
 
-LUAMOD_PATCH = unstable-devel
+LUAMOD_PATCH = dev
 
-LUAMOD_VERMAIN = 0.3-beta
+LUAMOD_VERMAIN = 0.3.1
 
 CC?=gcc
 CXX?=g++
@@ -46,7 +48,8 @@ endif
 
 ifeq ($(DEBUG),1)
 BUILD_TYPE = debug
-BASE_CFLAGS = -g -DDEBUG -D__USE_GNU -std=gnu++11 -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\" -DLUAMOD_PATCH=\"$(LUAMOD_PATCH)\" -DLUAMOD_COMPILER_VER=\"$(COMPILER_VER_CXX)\" -DLUAMOD_COMPILER=\"$(CXX)\" 
+BASE_CFLAGS = -g -DDEBUG -D__USE_GNU -std=gnu++11 -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\" -DLUAMOD_PATCH=\"$(LUAMOD_PATCH)\"
+# -DLUAMOD_COMPILER_VER=\"$(COMPILER_VER_CXX)\" -DLUAMOD_COMPILER=\"$(CXX)\"
 else
 BUILD_TYPE = release
 BASE_CFLAGS = -DNDEBUG -D__USE_GNU -std=gnu++11 -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\" -DLUAMOD_PATCH=\"$(LUAMOD_PATCH)\"
@@ -70,10 +73,10 @@ endif
 
 CFLAGS = $(BASE_CFLAGS) $(OPT_CFLAGS) $(ARCH_CFLAGS)
 
-INCLUDE=-I. -I./src -I$(HLSDK)/common -I$(HLSDK)/dlls -I$(HLSDK)/engine \
-		-I$(HLSDK)/game_shared -I$(HLSDK)/pm_shared -I$(HLSDK)/public -I$(METAMOD)
+INCLUDE=-I. -I$(DLL_SRCDIR) -I$(HLSDK)/common -I$(HLSDK)/dlls -I$(HLSDK)/engine \
+                -I$(HLSDK)/game_shared -I$(HLSDK)/pm_shared -I$(HLSDK)/public -I$(METAMOD) -I$(LUAMOD_API) -I$(LUA)
 	
-LDFLAGS=-L ./lua -llua -shared
+LDFLAGS=-L ./lua -llua -shared -lsqlite3
 
 # LDFLAGS=-L ./luajit/src -lluajit -lpthread -shared
 

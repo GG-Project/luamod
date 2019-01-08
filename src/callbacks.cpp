@@ -1,13 +1,10 @@
 #include "callbacks.h"
-#include "utils.h"
+#include "player.h"
 #include "luamod.h"
 #include "lua/CLuaWorker.hpp"
 
-LUAMOD_PLAYER_DATA PLAYERS[32];
-
 void GameDLLInit( void )
 {
-        //здесь нужно что нибудь сделать
         //ALERT(at_console, "[LM] GameDllInit\n");
         RETURN_META(MRES_IGNORED);
 }
@@ -15,52 +12,62 @@ void GameDLLInit( void )
 int pfnSpawn( edict_t *pent )
 {
     lua_State* L = g_luaworker->getToEvent("pfnSpawn");
-    if (!L) return 0;
 
-    lua_pushlightuserdata(L, pent);
-    g_luaworker->safeCall(L, 1, 0);
-    
+    if (L)
+    {
+        lua_pushlightuserdata(L, pent);
+        g_luaworker->safeCall(L, 1, 0);
+    }
+
     RETURN_META_VALUE(MRES_IGNORED, 0);
 }
 
+//HACK HACK
+//
+#include "utils.h"
+
 qboolean pfnClientConnect( edict_t* pEntity, const char *pszName, const char *pszAddress, char szRejectReason[ 128 ] ) 
 {
-    bool connected;
+    //qboolean connected;
 
-    connected = MDLL_ClientConnect(pEntity, pszName, pszAddress, szRejectReason);
-    //if(connected == true) {
+    //connected = MDLL_ClientConnect(pEntity, pszName, pszAddress, szRejectReason);
 
-    int i;
-    for (i = 0; i < 32; i++) {
-        if (PLAYERS[i].free == true) {
-            strncpy(PLAYERS[i].player_name, pszName, sizeof(PLAYERS[i].player_name));
-            PLAYERS[i].player_edict = pEntity;
-            //strncpy(PLAYERS[i].player_authid, GETPLAYERAUTHID(pEntity), sizeof(PLAYERS[i].player_authid));
-            strncpy(PLAYERS[i].player_address, pszAddress, sizeof(PLAYERS[i].player_address));
-            PLAYERS[i].player_put_on_server = false;
-            PLAYERS[i].free = false;
-            break;
-        }
+    LUAMOD_PUSH_PLAYER_DATA(pEntity, pszName, pszAddress);
+
+#ifdef DEBUG
+      ALERT(at_console, "[LM] Player %s Connected!!\n", pszName);
+#endif
+
+    lua_State* L = g_luaworker->getToEvent("pfnClientConnect");
+
+    if (L)
+    {
+        lua_pushlightuserdata(L, pEntity);
+        /*
+        lua_pushstring(L, pszName);
+        lua_pushstring(L, pszAddress);
+        */
+        lua_pushstring(L, ENTITY_KEYVALUE(pEntity, "name"));
+        lua_pushstring(L, ENTITY_KEYVALUE(pEntity, "ip"));
+        g_luaworker->safeCall(L, 3, 0);
     }
 
-    #ifdef DEBUG
-    void LUAMOD_PRINT_DEBUG_PLAYER_DATA();
-    
-    
-    ALERT(at_console, "[LM] Player %s Connected!!\n", PLAYERS[i].player_name);
-    #endif
-//}
-    RETURN_META_VALUE(MRES_SUPERCEDE, connected);
+    //RETURN_META_VALUE(MRES_IGNORED, connected);
+    RETURN_META_VALUE(MRES_IGNORED, 0);
 }
 
 void pfnClientDisconnect( edict_t* ed ) {
-//    lua_State* L = g_luaworker->getToEvent("pfnClientDisconnect");
-//    if (!L) return;
+    lua_State* L = g_luaworker->getToEvent("pfnClientDisconnect");
 
-    LUAMOD_REMOVE_PLAYERDATA(ed);
-    
-//    lua_pushlightuserdata(L, ed);
-//    g_luaworker->safeCall(L, 1, 0);
+    if (L)
+      {
+        lua_pushlightuserdata(L, ed);
+        g_luaworker->safeCall(L, 1, 0);
+      }
+
+    LUAMOD_REMOVE_PLAYER_DATA(ed);
+
+    RETURN_META(MRES_IGNORED);
 }
 
 void pfnClientKill( edict_t* ed )
@@ -70,17 +77,38 @@ void pfnClientKill( edict_t* ed )
 
     lua_pushlightuserdata(L, ed);
     g_luaworker->safeCall(L, 1, 0);
+
+    RETURN_META(MRES_IGNORED);
 }
 
 void pfnClientPutInServer( edict_t* ed ) {
-//    lua_State* L = g_luaworker->getToEvent("pfnClientPutInServer");
-//    if (!L) return;
-        
-    LUAMOD_PUSH_PLAYER_DATA_PUTONSRV(ed);
-    
-//    lua_pushlightuserdata(L, ed);
-//    g_luaworker->safeCall(L, 1, 0);
+    lua_State* L = g_luaworker->getToEvent("pfnClientPutInServer");
+
+     LUAMOD_PUSH_PLAYER_DATA_PUTONSRV(ed);
+
+    if (L)
+      {
+            lua_pushlightuserdata(L, ed);
+            g_luaworker->safeCall(L, 1, 0);
+      }
+
+      RETURN_META(MRES_IGNORED);
 }
+
+void pfnClientUserInfoChanged(edict_t *pEntity, char *pszInfoBuffer)
+{
+
+  lua_State* L = g_luaworker->getToEvent("pfnClientUserInfoChanged");
+
+  if (L)
+    {
+          lua_pushlightuserdata(L, pEntity);
+          g_luaworker->safeCall(L, 1, 0);
+    }
+
+    //LUAMOD_UPDATE_PLAYERDATA(pEntity);
+}
+
 
 void pfnClientCommand( edict_t* ed ) {
     lua_State* L = g_luaworker->getToEvent("pfnClientCommand");
@@ -96,6 +124,8 @@ void pfnClientCommand( edict_t* ed ) {
     }
     lua_pushstring(L, CMD_ARGS());
     g_luaworker->safeCall(L, 3, 0);
+
+    RETURN_META(MRES_IGNORED);
 }
 
 void pfnServerCommand( const char* str ) {
@@ -106,4 +136,34 @@ void pfnServerCommand( const char* str ) {
       lua_pcall(states[i], 0, 0, 0);
   }*/
     //RETURN_META_VALUE(MRES_IGNORED, 0);
+}
+
+void pfnCvarValue(const edict_t *pEnt, const char *pszValue)
+{
+  lua_State* L = g_luaworker->getToEvent("pfnCvarValue");
+
+  if (!L) return;
+
+  lua_pushlightuserdata(L, (edict_t*)pEnt);
+  lua_pushstring(L, CMD_ARGS());
+  g_luaworker->safeCall(L, 2, 0);
+
+  RETURN_META(MRES_IGNORED);
+}
+
+void pfnCvarValue2(const edict_t *pEnt, int requestID, const char *pszCvarName, const char *pszValue)
+{
+    ALERT( at_console, "cvar_name : %s cvar_value : %s requestid : %d\n", pszCvarName, pszValue, requestID );
+
+    lua_State* L = g_luaworker->getToEvent("pfnCvarValue2");
+
+    if (!L) return;
+
+    lua_pushlightuserdata(L, (edict_t*)pEnt);
+    lua_pushnumber(L, requestID);
+    lua_pushstring(L, pszCvarName);
+    lua_pushstring(L, pszValue);
+    g_luaworker->safeCall(L, 4, 0);
+
+    RETURN_META(MRES_IGNORED);
 }

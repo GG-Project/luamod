@@ -28,6 +28,8 @@ namespace lu_engfuncs {
     int l_pfnCVarSetFloat(lua_State *L);
     int l_pfnCVarSetString(lua_State *L);
     //
+    int l_pfnRegUserMsg(lua_State *L);
+    //
     int l_pfnClientPrintf(lua_State *L);
     //
     #ifdef REHLDS_SUPPORT

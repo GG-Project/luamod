@@ -18,10 +18,10 @@ DLL_FUNCTIONS g_DllFunctionTable = {
     NULL, // pfnSaveGlobalState
     NULL, // pfnRestoreGlobalState
     NULL, // pfnResetGlobalState
-    pfnClientConnect, // pfnClientConnect
-    pfnClientDisconnect, // pfnClientDisconnect
+    NULL, // pfnClientConnect
+    NULL, // pfnClientDisconnect
     pfnClientKill, // pfnClientKill
-    pfnClientPutInServer, // pfnClientPutInServer
+    NULL, // pfnClientPutInServer
     pfnClientCommand, // pfnClientCommand
     NULL, // pfnClientUserInfoChanged
     NULL, // pfnServerActivate
@@ -71,12 +71,12 @@ DLL_FUNCTIONS g_DllFunctionTable_Post = {
     NULL, // pfnSaveGlobalState
     NULL, // pfnRestoreGlobalState
     NULL, // pfnResetGlobalState
-    NULL, // pfnClientConnect
-    NULL, // pfnClientDisconnect
+    pfnClientConnect, // pfnClientConnect
+    pfnClientDisconnect, // pfnClientDisconnect
     NULL, // pfnClientKill
-    NULL, // pfnClientPutInServer
+    pfnClientPutInServer, // pfnClientPutInServer
     NULL, // pfnClientCommand
-    NULL, // pfnClientUserInfoChanged
+    pfnClientUserInfoChanged, // pfnClientUserInfoChanged
     NULL, // pfnServerActivate
     NULL, // pfnServerDeactivate
     NULL, // pfnPlayerPreThink
@@ -113,7 +113,7 @@ NEW_DLL_FUNCTIONS g_NewDllFunctionTable = {
     NULL, //! pfnGameShutdown()
     NULL, //! pfnShouldCollide()
     NULL, //! pfnCvarValue()
-    NULL, //! pfnCvarValue2()
+    pfnCvarValue2, //! pfnCvarValue2()
 };
 
 NEW_DLL_FUNCTIONS g_NewDllFunctionTable_Post = {
