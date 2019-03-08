@@ -2,13 +2,17 @@ HLSDK = include/hlsdk
 HLSDK_XASH3D = include/hlsdk-xash3d
 METAMOD = include/metamod
 LUAMOD_API = include/luamod
-LUA = lua/
+LUA = luajit/src/
 
-OS = Linux
+ifeq "$(TARGET)" "win32"
+OS=windows
+SHLIBEXT=dll
+else
+OS=linux
+SHLIBEXT=so
+endif
 
 DLL_SRCDIR=src
-
-DLL_OBJDIR=$(BUILD_TYPE)/obj
 
 DLLNAME=luamod_mm
 
@@ -27,7 +31,9 @@ endif
 COMPILER_VER_CC = $(shell $(CC) -dumpversion)
 COMPILER_VER_CXX = $(shell $(CC) -dumpversion)
 
-OPT_CFLAGS = -O3 -flto -funroll-loops -fomit-frame-pointer -fno-stack-protector -fPIC
+OPT_CFLAGS = -O3 -flto -funroll-loops -fomit-frame-pointer -fno-stack-protector -fPIC -Wall
+
+BASE_CFLAGS = -D__USE_GNU -std=gnu++11 -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\" -DLUAMOD_PATCH=\"$(LUAMOD_PATCH)\"
 
 ARCH=$(shell uname -m)
 
@@ -37,29 +43,28 @@ ifeq ($(ARCH), x86_64)
 ARCH = i686
 ARCH_CFLAGS +=-m32 -msse3 -march=i686 -mtune=generic
 else ifeq ($(ARCH), aarch64)
-ARCH_CFLAGS += 
+ARCH_CFLAGS +=
 #ARCH = ARCH_UNAME
 XASH3D = 1
 else ifeq (, $(findstring arm,$(ARCH_UNAME)))
-ARCH_CFLAGS += 
+ARCH_CFLAGS +=
 #ARCH = ARCH_UNAME
 XASH3D = 1
 endif
 
 ifeq ($(DEBUG),1)
 BUILD_TYPE = debug
-BASE_CFLAGS = -g -DDEBUG -D__USE_GNU -std=gnu++11 -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\" -DLUAMOD_PATCH=\"$(LUAMOD_PATCH)\"
-# -DLUAMOD_COMPILER_VER=\"$(COMPILER_VER_CXX)\" -DLUAMOD_COMPILER=\"$(CXX)\"
+BUILD_TYPE_CFLAGS = -g -DDEBUG
 else
 BUILD_TYPE = release
-BASE_CFLAGS = -DNDEBUG -D__USE_GNU -std=gnu++11 -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\" -DLUAMOD_PATCH=\"$(LUAMOD_PATCH)\"
+BUILD_TYPE_CFLAGS = -DNDEBUG
 endif
 
 LUAMOD_VERSION := $(LUAMOD_VERMAIN)-$(BUILD_TYPE)-$(LUAMOD_COMMIT)
-DLL_OBJDIR=$(BUILD_TYPE).os.$(ARCH)
+DLL_OBJDIR=$(BUILD_TYPE).$(OS).$(ARCH)
 
 ifeq ($(XASH3D), 1)
-BASE_CFLAGS += -DXASH3D
+BUILD_TYPE_CFLAGS += -DXASH3D
 HLSDK = $(HLSDK_XASH3D)
 endif
 
@@ -67,20 +72,18 @@ ifeq ($(REHLDS_SUPPORT),1)
 ifeq ($(XASH3D), 1)
 $(error "REHLDS not work with XASH3D headers!!!!")
 else
-BASE_CFLAGS += -DREHLDS_SUPPORT
+BUILD_TYPE_CFLAGS += -DREHLDS_SUPPORT
 endif
 endif
 
-CFLAGS = $(BASE_CFLAGS) $(OPT_CFLAGS) $(ARCH_CFLAGS)
+CFLAGS = $(BUILD_TYPE_CFLAGS) $(BASE_CFLAGS) $(OPT_CFLAGS) $(ARCH_CFLAGS)
 
 INCLUDE=-I. -I$(DLL_SRCDIR) -I$(HLSDK)/common -I$(HLSDK)/dlls -I$(HLSDK)/engine \
                 -I$(HLSDK)/game_shared -I$(HLSDK)/pm_shared -I$(HLSDK)/public -I$(METAMOD) -I$(LUAMOD_API) -I$(LUA)
 	
-LDFLAGS=-L ./lua -llua -shared -lsqlite3
+LDFLAGS=-L $(LUA) -lluajit -shared -lsqlite3 -lpthread -static
 
-# LDFLAGS=-L ./luajit/src -lluajit -lpthread -shared
-
-SHLIBEXT=so
+#LDFLAGS = -L./ lua - llua - lpthread - shared
 
 DO_CC=$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 

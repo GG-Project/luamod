@@ -10,5 +10,4 @@ int HaveCommentary(const char *string);
 
 char *StripCommentary(char *dest, const char *src, size_t n);
 
-
 #endif // PARSER_H

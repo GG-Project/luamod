@@ -1,8 +1,7 @@
+#include "ex_rehlds_api.h"
+#include "luamod.h"
 #include <extdll.h>
 #include <meta_api.h>
-#include "luamod.h"
-#include "ex_rehlds_api.h"
-#include "lua/CLuaWorker.hpp"
 
 meta_globals_t *gpMetaGlobals;
 gamedll_funcs_t *gpGamedllFuncs;
@@ -23,11 +22,10 @@ plugin_info_t Plugin_info = {
     PT_ANYTIME, // (when) unloadable
 };
 
-void Meta_Init(void) {
-    g_meta_init = TRUE;
-}
+void Meta_Init(void) { g_meta_init = TRUE; }
 
-C_DLLEXPORT int Meta_Query(char *interfaceVersion, plugin_info_t **plinfo, mutil_funcs_t *pMetaUtilFuncs) {
+C_DLLEXPORT int Meta_Query(char *interfaceVersion, plugin_info_t **plinfo, mutil_funcs_t *pMetaUtilFuncs)
+{
     *plinfo = &Plugin_info;
     gpMetaUtilFuncs = pMetaUtilFuncs;
     return TRUE;
@@ -37,28 +35,34 @@ META_FUNCTIONS gMetaFunctionTable = {
     NULL, // pfnGetEntityAPI		HL SDK; called before game DLL
     NULL, // pfnGetEntityAPI_Post		META; called after game DLL
     GetEntityAPI2, // pfnGetEntityAPI2		HL SDK2; called before game DLL
-    GetEntityAPI2_Post, // pfnGetEntityAPI2_Post	META; called after game DLL
-    GetNewDLLFunctions, // pfnGetNewDLLFunctions	HL SDK2; called before game DLL
-    GetNewDLLFunctions_Post, // pfnGetNewDLLFunctions_Post	META; called after game DLL
-    GetEngineFunctions, // pfnGetEngineFunctions	META; called before HL engine
-    GetEngineFunctions_Post, // pfnGetEngineFunctions_Post	META; called after HL engine
+    GetEntityAPI2_Post, // pfnGetEntityAPI2_Post	META; called after game
+                        // DLL
+    GetNewDLLFunctions, // pfnGetNewDLLFunctions	HL SDK2; called before game
+                        // DLL
+    GetNewDLLFunctions_Post, // pfnGetNewDLLFunctions_Post	META; called
+                             // after game DLL
+    GetEngineFunctions, // pfnGetEngineFunctions	META; called before HL
+                        // engine
+    GetEngineFunctions_Post, // pfnGetEngineFunctions_Post	META; called
+                             // after HL engine
 };
 
-C_DLLEXPORT int Meta_Attach(PLUG_LOADTIME now, META_FUNCTIONS *pFunctionTable, meta_globals_t *pMGlobals, gamedll_funcs_t *pGamedllFuncs) {
+void Parse_And_Load_Lua_Plugins(void);
+
+C_DLLEXPORT int Meta_Attach(PLUG_LOADTIME now, META_FUNCTIONS *pFunctionTable, meta_globals_t *pMGlobals, gamedll_funcs_t *pGamedllFuncs)
+{
     gpMetaGlobals = pMGlobals;
     gpGamedllFuncs = pGamedllFuncs;
 
-    g_luaworker = new CLuaWorker();
+    Parse_And_Load_Lua_Plugins();
 
 #ifdef REHLDS_SUPPORT
     if (meta_init_rehlds_api())
         g_engfuncs.pfnServerPrint("ReHLDS API successfully initialized.\n");
 #endif
 
-    memcpy(pFunctionTable, &gMetaFunctionTable, sizeof (META_FUNCTIONS));
+    memcpy(pFunctionTable, &gMetaFunctionTable, sizeof(META_FUNCTIONS));
     return TRUE;
 }
 
-C_DLLEXPORT int Meta_Detach(PLUG_LOADTIME now, PL_UNLOAD_REASON reason) {
-    return TRUE;
-}
+C_DLLEXPORT int Meta_Detach(PLUG_LOADTIME now, PL_UNLOAD_REASON reason) { return TRUE; }

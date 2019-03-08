@@ -1,14 +1,15 @@
 #ifdef REHLDS_SUPPORT
+#include "ex_rehlds_api.h"
 #include <extdll.h>
 #include <meta_api.h>
-#include "ex_rehlds_api.h"
 
-IRehldsApi* g_RehldsApi;
-const RehldsFuncs_t* g_RehldsFuncs;
-IRehldsHookchains* g_RehldsHookchains;
-IRehldsServerStatic* g_RehldsSvs;
+IRehldsApi *g_RehldsApi;
+const RehldsFuncs_t *g_RehldsFuncs;
+IRehldsHookchains *g_RehldsHookchains;
+IRehldsServerStatic *g_RehldsSvs;
 
-bool rehlds_api_try_init(CSysModule* engineModule, char* failureReason) {
+bool rehlds_api_try_init(CSysModule *engineModule, char *failureReason)
+{
     if (!engineModule) {
         sprintf(failureReason, "Failed to locate engine module\n");
         return false;
@@ -21,9 +22,12 @@ bool rehlds_api_try_init(CSysModule* engineModule, char* failureReason) {
     }
 
     int retCode = 0;
-    g_RehldsApi = (IRehldsApi*) ifaceFactory(VREHLDS_HLDS_API_VERSION, &retCode);
+    g_RehldsApi = (IRehldsApi *)ifaceFactory(VREHLDS_HLDS_API_VERSION, &retCode);
     if (!g_RehldsApi) {
-        sprintf(failureReason, "Failed to locate retrieve rehlds api interface from engine module, return code is %d\n", retCode);
+        sprintf(failureReason,
+            "Failed to locate retrieve rehlds api interface from engine "
+            "module, return code is %d\n",
+            retCode);
         return false;
     }
 
@@ -47,11 +51,12 @@ bool rehlds_api_try_init(CSysModule* engineModule, char* failureReason) {
     return true;
 }
 
-bool meta_init_rehlds_api() {
+bool meta_init_rehlds_api()
+{
     char failReason[128];
 
 #ifdef WIN32
-    CSysModule* engineModule = Sys_LoadModule("swds.dll");
+    CSysModule *engineModule = Sys_LoadModule("swds.dll");
     if (!rehlds_api_try_init(engineModule, failReason)) {
         engineModule = Sys_LoadModule("filesystem_stdio.dll");
         if (!rehlds_api_try_init(engineModule, failReason)) {
@@ -60,7 +65,7 @@ bool meta_init_rehlds_api() {
         }
     }
 #else
-    CSysModule* engineModule = Sys_LoadModule("engine_i486.so");
+    CSysModule *engineModule = Sys_LoadModule("engine_i486.so");
     if (!rehlds_api_try_init(engineModule, failReason)) {
         gpMetaUtilFuncs->pfnLogConsole(PLID, "%s", failReason);
         return false;

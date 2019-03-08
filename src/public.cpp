@@ -2,6 +2,6 @@
 #include <string.h>
 
 #ifdef GOLDSRC_PRIVATE
-#include "sys_shared.cpp"
 #include "interface.cpp"
+#include "sys_shared.cpp"
 #endif

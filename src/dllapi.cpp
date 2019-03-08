@@ -1,6 +1,6 @@
+#include "callbacks.h"
 #include <extdll.h>
 #include <meta_api.h>
-#include "callbacks.h"
 
 DLL_FUNCTIONS g_DllFunctionTable = {
     GameDLLInit, // pfnGameInit
@@ -109,7 +109,8 @@ DLL_FUNCTIONS g_DllFunctionTable_Post = {
 };
 
 NEW_DLL_FUNCTIONS g_NewDllFunctionTable = {
-    NULL, //! pfnOnFreeEntPrivateData()	Called right before the object's memory is freed.  Calls its destructor.
+    NULL, //! pfnOnFreeEntPrivateData()	Called right before the object's memory
+          //! is freed.  Calls its destructor.
     NULL, //! pfnGameShutdown()
     NULL, //! pfnShouldCollide()
     NULL, //! pfnCvarValue()
@@ -117,14 +118,16 @@ NEW_DLL_FUNCTIONS g_NewDllFunctionTable = {
 };
 
 NEW_DLL_FUNCTIONS g_NewDllFunctionTable_Post = {
-    NULL, //! pfnOnFreeEntPrivateData()	Called right before the object's memory is freed.  Calls its destructor.
+    NULL, //! pfnOnFreeEntPrivateData()	Called right before the object's memory
+          //! is freed.  Calls its destructor.
     NULL, //! pfnGameShutdown()
     NULL, //! pfnShouldCollide()
     NULL, //! pfnCvarValue()
     NULL, //! pfnCvarValue2()
 };
 
-C_DLLEXPORT int GetEntityAPI2(DLL_FUNCTIONS *pFunctionTable, int *interfaceVersion) {
+C_DLLEXPORT int GetEntityAPI2(DLL_FUNCTIONS *pFunctionTable, int *interfaceVersion)
+{
     if (!pFunctionTable) {
         ALERT(at_logged, "%s called with null pFunctionTable", __FUNCTION__);
         return FALSE;
@@ -135,11 +138,12 @@ C_DLLEXPORT int GetEntityAPI2(DLL_FUNCTIONS *pFunctionTable, int *interfaceVersi
         return FALSE;
     }
 
-    memcpy(pFunctionTable, &g_DllFunctionTable, sizeof (DLL_FUNCTIONS));
+    memcpy(pFunctionTable, &g_DllFunctionTable, sizeof(DLL_FUNCTIONS));
     return TRUE;
 }
 
-C_DLLEXPORT int GetEntityAPI2_Post(DLL_FUNCTIONS *pFunctionTable, int *interfaceVersion) {
+C_DLLEXPORT int GetEntityAPI2_Post(DLL_FUNCTIONS *pFunctionTable, int *interfaceVersion)
+{
     if (!pFunctionTable) {
         ALERT(at_logged, "%s called with null pFunctionTable", __FUNCTION__);
         return FALSE;
@@ -150,11 +154,12 @@ C_DLLEXPORT int GetEntityAPI2_Post(DLL_FUNCTIONS *pFunctionTable, int *interface
         return FALSE;
     }
 
-    memcpy(pFunctionTable, &g_DllFunctionTable_Post, sizeof (DLL_FUNCTIONS));
+    memcpy(pFunctionTable, &g_DllFunctionTable_Post, sizeof(DLL_FUNCTIONS));
     return TRUE;
 }
 
-C_DLLEXPORT int GetNewDLLFunctions(NEW_DLL_FUNCTIONS *pNewFunctionTable, int *interfaceVersion) {
+C_DLLEXPORT int GetNewDLLFunctions(NEW_DLL_FUNCTIONS *pNewFunctionTable, int *interfaceVersion)
+{
     if (!pNewFunctionTable) {
         ALERT(at_logged, "%s called with null pNewFunctionTable", __FUNCTION__);
         return FALSE;
@@ -165,11 +170,12 @@ C_DLLEXPORT int GetNewDLLFunctions(NEW_DLL_FUNCTIONS *pNewFunctionTable, int *in
         return FALSE;
     }
 
-    memcpy(pNewFunctionTable, &g_NewDllFunctionTable, sizeof (NEW_DLL_FUNCTIONS));
+    memcpy(pNewFunctionTable, &g_NewDllFunctionTable, sizeof(NEW_DLL_FUNCTIONS));
     return TRUE;
 }
 
-C_DLLEXPORT int GetNewDLLFunctions_Post(NEW_DLL_FUNCTIONS *pNewFunctionTable, int *interfaceVersion) {
+C_DLLEXPORT int GetNewDLLFunctions_Post(NEW_DLL_FUNCTIONS *pNewFunctionTable, int *interfaceVersion)
+{
     if (!pNewFunctionTable) {
         ALERT(at_logged, "%s called with null pNewFunctionTable", __FUNCTION__);
         return FALSE;
@@ -180,6 +186,6 @@ C_DLLEXPORT int GetNewDLLFunctions_Post(NEW_DLL_FUNCTIONS *pNewFunctionTable, in
         return FALSE;
     }
 
-    memcpy(pNewFunctionTable, &g_NewDllFunctionTable_Post, sizeof (NEW_DLL_FUNCTIONS));
+    memcpy(pNewFunctionTable, &g_NewDllFunctionTable_Post, sizeof(NEW_DLL_FUNCTIONS));
     return TRUE;
 }

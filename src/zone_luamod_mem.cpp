@@ -3,7 +3,7 @@
 
 void Lua_Alloc_Init(void);
 
-byte *luamod_mem_pool; //main mempool!!
+byte *luamod_mem_pool; // main mempool!!
 
 void Memory_Pools_Init()
 {

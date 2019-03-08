@@ -169,8 +169,9 @@ enginefuncs_t g_EngineFunctionsTable = {
     NULL, // pfnQueryClientCvarValue()
     // Added Added 2005-11-22 (no SDK update)
     NULL, // pfnQueryClientCvarValue2()
-    // Added 2009-06-17 (no SDK update)
-    // NULL,	// pfnEngCheckParm()			// s1lent: comment out this, for compatibility with older versions metamod
+          // Added 2009-06-17 (no SDK update)
+          // NULL,	// pfnEngCheckParm()			// s1lent: comment out this, for
+          // compatibility with older versions metamod
 };
 
 enginefuncs_t g_EngineFunctionsTable_Post = {
@@ -340,11 +341,13 @@ enginefuncs_t g_EngineFunctionsTable_Post = {
     NULL, // pfnQueryClientCvarValue()
     // Added Added 2005-11-22 (no SDK update)
     NULL, // pfnQueryClientCvarValue2()
-    // Added 2009-06-17 (no SDK update)
-    // NULL,	// pfnEngCheckParm()			// s1lent: comment out this, for compatibility with older versions metamod
+          // Added 2009-06-17 (no SDK update)
+          // NULL,	// pfnEngCheckParm()			// s1lent: comment out this, for
+          // compatibility with older versions metamod
 };
 
-C_DLLEXPORT int GetEngineFunctions(enginefuncs_t *pengfuncsFromEngine, int *interfaceVersion) {
+C_DLLEXPORT int GetEngineFunctions(enginefuncs_t *pengfuncsFromEngine, int *interfaceVersion)
+{
     if (!pengfuncsFromEngine) {
         ALERT(at_logged, "%s called with null pengfuncsFromEngine", __FUNCTION__);
         return FALSE;
@@ -355,11 +358,12 @@ C_DLLEXPORT int GetEngineFunctions(enginefuncs_t *pengfuncsFromEngine, int *inte
         return FALSE;
     }
 
-    memcpy(pengfuncsFromEngine, &g_EngineFunctionsTable, sizeof (enginefuncs_t));
+    memcpy(pengfuncsFromEngine, &g_EngineFunctionsTable, sizeof(enginefuncs_t));
     return TRUE;
 }
 
-C_DLLEXPORT int GetEngineFunctions_Post(enginefuncs_t *pengfuncsFromEngine, int *interfaceVersion) {
+C_DLLEXPORT int GetEngineFunctions_Post(enginefuncs_t *pengfuncsFromEngine, int *interfaceVersion)
+{
     if (!pengfuncsFromEngine) {
         ALERT(at_logged, "%s called with null pengfuncsFromEngine", __FUNCTION__);
         return FALSE;
@@ -370,6 +374,6 @@ C_DLLEXPORT int GetEngineFunctions_Post(enginefuncs_t *pengfuncsFromEngine, int 
         return FALSE;
     }
 
-    memcpy(pengfuncsFromEngine, &g_EngineFunctionsTable_Post, sizeof (enginefuncs_t));
+    memcpy(pengfuncsFromEngine, &g_EngineFunctionsTable_Post, sizeof(enginefuncs_t));
     return TRUE;
 }

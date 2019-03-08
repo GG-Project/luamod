@@ -1,10 +1,10 @@
 #pragma once
 
-#include <luamod.h>
 #include <extdll.h>
+#include <luamod.h>
 #include <meta_api.h>
-#include <string>
 #include <stdexcept>
+#include <string>
 #include <utils.h>
 
 /*
@@ -25,8 +25,7 @@
 #endif
 */
 namespace lu_luamod {
-    void init_api(lua_State *L);
-    int l_set_task(lua_State *L);
-    int l_del_task(lua_State *L);
-    int l_include(lua_State *L);
-};
+void init_api(lua_State *L);
+int l_set_task(lua_State *L);
+int l_del_task(lua_State *L);
+}; // namespace lu_luamod

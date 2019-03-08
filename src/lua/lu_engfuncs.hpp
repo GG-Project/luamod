@@ -2,37 +2,36 @@
 #include "luai.h"
 
 namespace lu_engfuncs {
-    void init_api(lua_State *L);
-    int l_pfnPrecacheModel(lua_State *L);
-    int l_pfnPrecacheSound(lua_State *L);
-    // int l_pfnPrecacheGeneric(lua_State *L);
-    //
-    int l_pfnServerCommand(lua_State *L);
-    int l_pfnServerExecute(lua_State *L);
-    int l_pfnClientCommand(lua_State *L);
-    //
-    int l_pfnMessageBegin(lua_State *L);
-    int l_pfnMessageEnd(lua_State *L);
-    int l_pfnWriteByte(lua_State *L);
-    int l_pfnWriteChar(lua_State *L);
-    int l_pfnWriteShort(lua_State *L);
-    int l_pfnWriteLong(lua_State *L);
-    int l_pfnWriteAngle(lua_State *L);
-    int l_pfnWriteCoord(lua_State *L);
-    int l_pfnWriteString(lua_State *L);
-    int l_pfnWriteEntity(lua_State *L);
-    //
-    int l_pfnRegister_Cvar(lua_State *L);
-    int l_pfnCVarGetFloat(lua_State *L);
-    int l_pfnCVarGetString(lua_State *L);
-    int l_pfnCVarSetFloat(lua_State *L);
-    int l_pfnCVarSetString(lua_State *L);
-    //
-    int l_pfnRegUserMsg(lua_State *L);
-    //
-    int l_pfnClientPrintf(lua_State *L);
-    //
-    #ifdef REHLDS_SUPPORT
-    //REHLDS
-    #endif
-}
+void init_api(lua_State *L);
+int l_pfnPrecacheModel(lua_State *L);
+int l_pfnPrecacheSound(lua_State *L);
+//
+int l_pfnServerCommand(lua_State *L);
+int l_pfnServerExecute(lua_State *L);
+int l_pfnClientCommand(lua_State *L);
+//
+int l_pfnMessageBegin(lua_State *L);
+int l_pfnMessageEnd(lua_State *L);
+int l_pfnWriteByte(lua_State *L);
+int l_pfnWriteChar(lua_State *L);
+int l_pfnWriteShort(lua_State *L);
+int l_pfnWriteLong(lua_State *L);
+int l_pfnWriteAngle(lua_State *L);
+int l_pfnWriteCoord(lua_State *L);
+int l_pfnWriteString(lua_State *L);
+int l_pfnWriteEntity(lua_State *L);
+//
+int l_pfnRegister_Cvar(lua_State *L);
+int l_pfnCVarGetFloat(lua_State *L);
+int l_pfnCVarGetString(lua_State *L);
+int l_pfnCVarSetFloat(lua_State *L);
+int l_pfnCVarSetString(lua_State *L);
+//
+int l_pfnRegUserMsg(lua_State *L);
+//
+int l_pfnClientPrintf(lua_State *L);
+//
+#ifdef REHLDS_SUPPORT
+// REHLDS
+#endif
+} // namespace lu_engfuncs
