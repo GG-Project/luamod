@@ -92,7 +92,7 @@ const char *LM_buildlua(void)
 #else
     const char *version = LUA_VERSION;
 #endif
-    if (*version == NULL)
+    if (version == nullptr)
         return "UNKNOWN";
 
     return version;

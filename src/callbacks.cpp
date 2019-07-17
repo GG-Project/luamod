@@ -4,21 +4,17 @@
 
 #include "lua/lua_plugins.h"
 
+#include "luamod_types.h"
+
+extern luamod_plugin_t *plugins_list;
+
 void GameDLLInit(void)
 {
-    // ALERT(at_console, "[LM] GameDllInit\n");
     RETURN_META(MRES_IGNORED);
 }
 
 int pfnSpawn(edict_t *pent)
 {
-    // lua_State* L = nullptr; //g_luaworker->getToEvent("pfnSpawn");
-    // if (L)
-    //{
-    // lua_pushlightuserdata(L, pent);
-    // plugin_safecall(L, 1, 0);
-    // }
-    //   RETURN_META_VALUE(MRES_IGNORED, 0);
 }
 
 #include "utils.h"
@@ -34,12 +30,12 @@ qboolean pfnClientConnect(edict_t *pEntity, const char *pszName, const char *psz
     ALERT(at_console, "[LM] Player %s Connected!!\n", pszName_fix);
 #endif
 
-    luamod_plugin *ptr = plugins_list;
+    luamod_plugin_t *ptr = plugins_list;
 
-    while (ptr != NULL) {
+    while (ptr != nullptr) {
 
         if (plugin_have_event(ptr->L, "pfnClientConnect")) {
-            lua_pushlightuserdata(ptr->L, pEntity);
+            lua_pushedict(ptr->L, pEntity);
             /*
            lua_pushstring(L, pszName);
            lua_pushstring(L, pszAddress);
@@ -54,34 +50,34 @@ qboolean pfnClientConnect(edict_t *pEntity, const char *pszName, const char *psz
     RETURN_META_VALUE(MRES_HANDLED, 0);
 }
 
-void pfnClientDisconnect(edict_t *ed)
+void pfnClientDisconnect(edict_t *pEntity)
 {
 
-    luamod_plugin *ptr = plugins_list;
+    luamod_plugin_t *ptr = plugins_list;
 
-    while (ptr != NULL) {
+    while (ptr != nullptr) {
 
         if (plugin_have_event(ptr->L, "pfnClientDisconnect")) {
-            lua_pushlightuserdata(ptr->L, ed);
+            lua_pushedict(ptr->L, pEntity);
             plugin_safecall(ptr->L, 1, 0);
         }
 
         ptr = ptr->next;
     }
 
-    LUAMOD_REMOVE_PLAYER_DATA(ed);
+    LUAMOD_REMOVE_PLAYER_DATA(pEntity);
 
     RETURN_META(MRES_HANDLED);
 }
 
-void pfnClientKill(edict_t *ed)
+void pfnClientKill(edict_t *pEntity)
 {
-    luamod_plugin *ptr = plugins_list;
+    luamod_plugin_t *ptr = plugins_list;
 
-    while (ptr != NULL) {
+    while (ptr != nullptr) {
 
         if (plugin_have_event(ptr->L, "pfnClientKill")) {
-            lua_pushlightuserdata(ptr->L, ed);
+            lua_pushedict(ptr->L, pEntity);
             plugin_safecall(ptr->L, 1, 0);
         }
 
@@ -91,44 +87,60 @@ void pfnClientKill(edict_t *ed)
     RETURN_META(MRES_HANDLED);
 }
 
-void pfnClientPutInServer(edict_t *ed)
+void pfnClientPutInServer(edict_t *pEntity)
 {
-    LUAMOD_PUSH_PLAYER_DATA_PUTONSRV(ed);
+    LUAMOD_PUSH_PLAYER_DATA_PUTONSRV(pEntity);
 
-    luamod_plugin *ptr = plugins_list;
+    luamod_plugin_t *ptr = plugins_list;
 
-    while (ptr != NULL) {
+    while (ptr != nullptr) {
 
         if (plugin_have_event(ptr->L, "pfnClientPutInServer")) {
-            lua_pushlightuserdata(ptr->L, ed);
+            lua_pushedict(ptr->L, pEntity);
             plugin_safecall(ptr->L, 1, 0);
         }
 
         ptr = ptr->next;
     }
 
-    RETURN_META(MRES_IGNORED);
+    RETURN_META(MRES_HANDLED);
 }
 
 void pfnClientUserInfoChanged(edict_t *pEntity, char *pszInfoBuffer)
 {
-    // lua_State* L = nullptr;
-    // //g_luaworker->getToEvent("pfnClientUserInfoChanged"); if (L)
-    //{
-    //    lua_pushlightuserdata(L, pEntity);
-    //  plugin_safecall(L, 1, 0);
-    //}
-    // LUAMOD_UPDATE_PLAYERDATA(pEntity);
+  luamod_plugin_t *ptr = plugins_list;
+
+  while (ptr != nullptr) {
+
+      if (plugin_have_event(ptr->L, "pfnClientUserInfoChanged")) {
+          lua_pushedict(ptr->L, pEntity);
+	  lua_pushstring(ptr->L, pszInfoBuffer);
+          plugin_safecall(ptr->L, 2, 0);
+      }
+
+      ptr = ptr->next;
+  }
+
+  RETURN_META(MRES_HANDLED);
 }
 
-void pfnClientCommand(edict_t *ed)
+void pfnClientCommand(edict_t *pEntity)
 {
-    luamod_plugin *ptr = plugins_list;
+    luamod_plugin_t *ptr = plugins_list;
 
-    while (ptr != NULL) {
+    gpMetaGlobals->mres = MRES_HANDLED;
+
+    while (ptr != nullptr) {
+
+        //if(!strncasecmp("say", CMD_ARGV(0), 4) || !strncasecmp("say_team", CMD_ARGV(0), 9))
+        //  {
+        //      gpMetaGlobals->mres = MRES_SUPERCEDE;
+        //  } else {
+        //      gpMetaGlobals->mres = MRES_HANDLED;
+        //  }
 
         if (plugin_have_event(ptr->L, "pfnClientCommand")) {
-            lua_pushlightuserdata(ptr->L, ed);
+            lua_pushedict(ptr->L, pEntity);
             // Push table
             lua_newtable(ptr->L);
             for (int i = 0; i < CMD_ARGC(); i++) {
@@ -144,27 +156,55 @@ void pfnClientCommand(edict_t *ed)
     }
 
     RETURN_META(MRES_HANDLED);
+    return;
+}
+
+void pfnPlayerPreThink(edict_t *pEntity)
+{
+  luamod_plugin_t *ptr = plugins_list;
+
+  while (ptr != nullptr) {
+
+      if (plugin_have_event(ptr->L, "pfnPlayerPreThink")) {
+          lua_pushedict(ptr->L, pEntity);
+          plugin_safecall(ptr->L, 1, 0);
+      }
+
+      ptr = ptr->next;
+  }
+
+  RETURN_META(MRES_HANDLED);
+}
+
+void pfnPlayerPostThink(edict_t *pEntity)
+{
+  luamod_plugin_t *ptr = plugins_list;
+
+  while (ptr != nullptr) {
+
+      if (plugin_have_event(ptr->L, "pfnPlayerPostThink")) {
+          lua_pushedict(ptr->L, pEntity);
+          plugin_safecall(ptr->L, 1, 0);
+      }
+
+      ptr = ptr->next;
+  }
+
+  RETURN_META(MRES_HANDLED);
 }
 
 void pfnServerCommand(const char *str)
 {
-    /*ALERT(at_console, "[LM] Server command %s\n", str);
-    auto states = eventServerCommand->states;
-    for (int i = 0; i < states.size(); i++) {
-      lua_getglobal(states[i], "event");
-      lua_pcall(states[i], 0, 0, 0);
-  }*/
-    // RETURN_META_VALUE(MRES_IGNORED, 0);
 }
 
-void pfnCvarValue2(const edict_t *pEnt, int requestID, const char *pszCvarName, const char *pszValue)
+void pfnCvarValue2(const edict_t *pEntity, int requestID, const char *pszCvarName, const char *pszValue)
 {
-    luamod_plugin *ptr = plugins_list;
+    luamod_plugin_t *ptr = plugins_list;
 
-    while (ptr != NULL) {
+    while (ptr != nullptr) {
 
         if (plugin_have_event(ptr->L, "pfnCvarValue2")) {
-            lua_pushlightuserdata(ptr->L, (edict_t *)pEnt);
+            lua_pushedict(ptr->L, (edict_t *)pEntity);
             lua_pushnumber(ptr->L, requestID);
             lua_pushstring(ptr->L, pszCvarName);
             lua_pushstring(ptr->L, pszValue);

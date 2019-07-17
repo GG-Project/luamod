@@ -1,4 +1,5 @@
 #include "lu_luamod.h"
+#include "build.h"
 #include <extdll.h>
 #include <luamod.h>
 #include <meta_api.h>
@@ -19,6 +20,7 @@ void lu_luamod::init_api(lua_State *L)
 {
     lua_register(L, "set_task", l_set_task);
     lua_register(L, "del_task", l_del_task);
+    lua_register(L, "luamod_version", l_version);
     // lua_register(L, "include", l_include);
 
     lua_pushfstring(L, MOD_PATH);
@@ -77,27 +79,54 @@ int lu_luamod::l_set_task(lua_State *L)
     return 1;
 }
 
+inline void remove_from_list( LUAMOD_SET_TASK *ptr_to_remove )
+{
+    LUAMOD_SET_TASK *ptr = task_list, *ptr_t1 = nullptr;
+    if(ptr->L == ptr_to_remove->L)
+    {
+        task_list = ptr->next;
+        return;
+    }
+
+    ptr_t1 = ptr->next;
+
+    while(ptr_t1)
+    {
+
+        if( ptr_t1->L == ptr_to_remove->L )
+        {
+            ptr->next = ptr_t1->next;
+            return;
+        }
+
+        ptr = ptr_t1;
+        ptr_t1 = ptr_t1->next;
+    }
+}
+
 int lu_luamod::l_del_task(lua_State *L)
 {
-    int id = luaL_checknumber(L, 1);
+    int id = (int)luaL_checkinteger(L, 1);
 
     if (id < 0 || id > tasks) {
-        luaL_error(L, "task id invalid");
+        luaL_argerror(L, 1, "task id invalid");
         return 0;
     }
 
-    LUAMOD_SET_TASK *ptr, *ptr_tmp, *ptr_task = NULL;
+    LUAMOD_SET_TASK *ptr, *ptr_task = NULL;
 
     ptr = task_list;
 
-    while (ptr != NULL) {
-        if (ptr->next->taskid == id) {
-            ptr_task = ptr->next;
-            ptr_tmp = ptr_task->next;
+    while (ptr) {
+        if (ptr->taskid == id) {
+            ptr_task = ptr;
+            ptr = nullptr;
             break;
         }
         ptr = ptr->next;
     }
+
+    remove_from_list(ptr_task);
 
     if (pthread_cancel(ptr_task->task_thread) == ESRCH) {
         luaL_error(L, "del_task error : no such thread");
@@ -106,11 +135,12 @@ int lu_luamod::l_del_task(lua_State *L)
 
     Mem_Free(ptr_task);
 
-    ptr->next = ptr_tmp;
-
-    ptr = NULL;
-    ptr_tmp = NULL;
-
     tasks--;
+    return 1;
+}
+
+int lu_luamod::l_version(lua_State *L)
+{
+    lua_pushstring(L, LM_buildversion());
     return 1;
 }

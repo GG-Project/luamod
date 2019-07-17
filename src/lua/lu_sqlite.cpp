@@ -43,6 +43,7 @@ static int sqlite_callback(void *data, int argc, char **argv, char **colum_name)
     lua_settable(callback->L, -3);
 
     for (int k = 0; k < argc; k++) {
+
         if (!strcasecmp(colum_name[k], "id")) {
             lua_pushnumber(callback->L, atoi(argv[k]));
 
@@ -52,6 +53,7 @@ static int sqlite_callback(void *data, int argc, char **argv, char **colum_name)
                 lua_pushstring(callback->L, argv[k]); // value
                 lua_setfield(callback->L, -2, colum_name[k]); // key
             }
+
             lua_settable(callback->L, -3);
         }
     }
@@ -88,8 +90,6 @@ int lu_sqlite::sqlite_init_db(lua_State *L)
 
 int lu_sqlite::sqlite_db_execute(lua_State *L)
 {
-    int error_code;
-
     LUAMOD_SQLITE3_CALLBACK *lua_callback = (LUAMOD_SQLITE3_CALLBACK *)malloc(sizeof(LUAMOD_SQLITE3_CALLBACK));
 
     lua_callback->callback_name = luaL_checkstring(L, 3);
@@ -100,11 +100,12 @@ int lu_sqlite::sqlite_db_execute(lua_State *L)
 
     char *sqlite_errmsg;
 
-    error_code = sqlite3_exec((sqlite3 *)lua_touserdata(L, 1), luaL_checkstring(L, 2), sqlite_callback, lua_callback, &sqlite_errmsg);
+    int error_code = sqlite3_exec((sqlite3 *)lua_touserdata(L, 1), luaL_checkstring(L, 2), sqlite_callback, lua_callback, &sqlite_errmsg);
 
     if (error_code != SQLITE_OK) {
         luaL_error(L, "[LM] SQLITE ERROR : %s\n", sqlite_errmsg);
         sqlite3_free(sqlite_errmsg);
+        free(lua_callback);
         return 0;
     } else {
         ALERT(at_console, "[LM] SQLITE DONE SUCCESSFUL!\n");

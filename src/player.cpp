@@ -35,22 +35,39 @@ size_t count_to_symbol(const char *string, int smb)
     return result;
 }
 
+void LUAMOD_CLEAN_PLAYER_DATA()
+{
+    for (int i = 0; i < 32; i++) {
+        if(fast_FNullEnt(PLAYERS[i].player_edict))
+        {
+            PLAYERS[i].player_edict = NULL;
+            memset(&PLAYERS[i].player_name, 0, sizeof(PLAYERS[i].player_name));
+            memset(&PLAYERS[i].player_address, 0, sizeof(PLAYERS[i].player_address));
+            PLAYERS[i].player_put_on_server = false;
+            PLAYERS[i].free = true;
+        }
+    }
+}
+
+void LUAMOD_CLEAN_PLAYER_DATA_INDEX(int index)
+{
+
+}
+
 void LUAMOD_PUSH_PLAYER_DATA(edict_t *pEntity, const char *pszName, const char *pszAddress)
 {
+
     for (int i = 0; i < 32; i++) {
 
         if (PLAYERS[i].free == true) {
             /*
-          strncpy(PLAYERS[i].player_name, pszName, sizeof(PLAYERS[i].player_name));
-          strncpy(PLAYERS[i].player_address, pszAddress,
-          sizeof(PLAYERS[i].player_address)); strncpy(PLAYERS[i].player_authid,
-          GETPLAYERAUTHID(pEntity), sizeof(PLAYERS[i].player_authid));
-          */
+            strncpy(PLAYERS[i].player_name, pszName, sizeof(PLAYERS[i].player_name));
+            strncpy(PLAYERS[i].player_address, pszAddress, sizeof(PLAYERS[i].player_address));
+            strncpy(PLAYERS[i].player_authid, GETPLAYERAUTHID(pEntity), sizeof(PLAYERS[i].player_authid));
+            */
 
             strncpy(PLAYERS[i].player_name, ENTITY_KEYVALUE(pEntity, "name"), sizeof(PLAYERS[i].player_name));
             strncpy(PLAYERS[i].player_address, ENTITY_KEYVALUE(pEntity, "ip"), count_to_symbol(ENTITY_KEYVALUE(pEntity, "ip"), ':'));
-            // strncpy(PLAYERS[i].player_address, address,
-            // sizeof(PLAYERS[i].player_address));
 
             PLAYERS[i].player_edict = pEntity;
             PLAYERS[i].player_put_on_server = false;
@@ -60,17 +77,28 @@ void LUAMOD_PUSH_PLAYER_DATA(edict_t *pEntity, const char *pszName, const char *
     }
 
 #ifdef DEBUG
-    void LUAMOD_PRINT_DEBUG_PLAYER_DATA();
+    LUAMOD_PRINT_DEBUG_PLAYER_DATA();
 #endif
 }
 
 void LUAMOD_REMOVE_PLAYER_DATA(edict_t *pEntity)
 {
+
     for (int i = 0; i < 32; i++) {
+
+        if(fast_FNullEnt(PLAYERS[i].player_edict))
+        {
+            PLAYERS[i].player_edict = NULL;
+            memset(&PLAYERS[i].player_name, 0, sizeof(PLAYERS[i].player_name));
+            memset(&PLAYERS[i].player_address, 0, sizeof(PLAYERS[i].player_address));
+            PLAYERS[i].player_put_on_server = false;
+            PLAYERS[i].free = true;
+        }
+
         if (PLAYERS[i].player_edict == pEntity) {
             PLAYERS[i].player_edict = NULL;
-            memset(PLAYERS[i].player_name, 0, sizeof(PLAYERS[i].player_name));
-            memset(PLAYERS[i].player_address, 0, sizeof(PLAYERS[i].player_address));
+            memset(&PLAYERS[i].player_name, 0, sizeof(PLAYERS[i].player_name));
+            memset(&PLAYERS[i].player_address, 0, sizeof(PLAYERS[i].player_address));
             PLAYERS[i].player_put_on_server = false;
             PLAYERS[i].free = true;
             break;

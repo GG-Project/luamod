@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#define DICT_BUFF_LEN 512
+
 /*
 [LANG]
 KEY = "value"
@@ -13,8 +15,8 @@ KEY = "value"
 */
 
 struct key_value {
-    char *key;
-    char *value;
+    char key[DICT_BUFF_LEN];
+    char value[DICT_BUFF_LEN];
     struct key_value *next;
 };
 

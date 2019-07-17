@@ -37,3 +37,6 @@
 #lua
 *.lua
 *.luac
+
+#Qt creator
+*.autosave

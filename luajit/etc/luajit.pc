@@ -1,4 +1,4 @@
-#Package information for LuaJIT to be used by pkg - config.
+# Package information for LuaJIT to be used by pkg-config.
 majver=2
 minver=1
 relver=0
@@ -22,7 +22,4 @@ Version: ${version}
 Requires:
 Libs: -L${libdir} -l${libname}
 Libs.private: -Wl,-E -lm -ldl
-Cflags: -I$
-{
-    includedir
-}
+Cflags: -I${includedir}

@@ -11,12 +11,12 @@
 #if LJ_HASFFI
 
 /* Namespace for C library indexing. */
-#define CLNS_INDEX ((1u << CT_FUNC) | (1u << CT_EXTERN) | (1u << CT_CONSTVAL))
+#define CLNS_INDEX	((1u<<CT_FUNC)|(1u<<CT_EXTERN)|(1u<<CT_CONSTVAL))
 
 /* C library namespace. */
 typedef struct CLibrary {
-    void *handle; /* Opaque handle for dynamic library loader. */
-    GCtab *cache; /* Cache for resolved symbols. Anchored in ud->env. */
+  void *handle;		/* Opaque handle for dynamic library loader. */
+  GCtab *cache;		/* Cache for resolved symbols. Anchored in ud->env. */
 } CLibrary;
 
 LJ_FUNC TValue *lj_clib_index(lua_State *L, CLibrary *cl, GCstr *name);

@@ -23,7 +23,7 @@ LJ_FUNC void lj_mcode_abort(jit_State *J);
 LJ_FUNC MCode *lj_mcode_patch(jit_State *J, MCode *ptr, int finish);
 LJ_FUNC_NORET void lj_mcode_limiterr(jit_State *J, size_t need);
 
-#define lj_mcode_commitbot(J, m) (J->mcbot = (m))
+#define lj_mcode_commitbot(J, m)	(J->mcbot = (m))
 
 #endif
 

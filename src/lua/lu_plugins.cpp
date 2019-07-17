@@ -14,7 +14,7 @@ void lu_plugin_api::init(lua_State *L)
 
 int lu_plugin_api::l_register_plugin(lua_State *L)
 {
-    luamod_plugin *plugin_ptr = find_plugin_by_luastate(L);
+    luamod_plugin_t *plugin_ptr = find_plugin_by_luastate(L);
 
     if (plugin_ptr == NULL) {
         luaL_error(L, "Error while finding plugin struct in list\n");

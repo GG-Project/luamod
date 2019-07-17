@@ -2,7 +2,7 @@ HLSDK = include/hlsdk
 HLSDK_XASH3D = include/hlsdk-xash3d
 METAMOD = include/metamod
 LUAMOD_API = include/luamod
-LUA = luajit/src/
+LUA = luajit/src
 
 ifeq "$(TARGET)" "win32"
 OS=windows
@@ -43,7 +43,7 @@ ifeq ($(ARCH), x86_64)
 ARCH = i686
 ARCH_CFLAGS +=-m32 -msse3 -march=i686 -mtune=generic
 else ifeq ($(ARCH), aarch64)
-ARCH_CFLAGS +=
+ARCH_CFLAGS += -march=native
 #ARCH = ARCH_UNAME
 XASH3D = 1
 else ifeq (, $(findstring arm,$(ARCH_UNAME)))
@@ -81,7 +81,7 @@ CFLAGS = $(BUILD_TYPE_CFLAGS) $(BASE_CFLAGS) $(OPT_CFLAGS) $(ARCH_CFLAGS)
 INCLUDE=-I. -I$(DLL_SRCDIR) -I$(HLSDK)/common -I$(HLSDK)/dlls -I$(HLSDK)/engine \
                 -I$(HLSDK)/game_shared -I$(HLSDK)/pm_shared -I$(HLSDK)/public -I$(METAMOD) -I$(LUAMOD_API) -I$(LUA)
 	
-LDFLAGS=-L $(LUA) -lluajit -shared -lsqlite3 -lpthread -static
+LDFLAGS=-L $(LUA) -lluajit -shared -lsqlite3 -lpthread
 
 #LDFLAGS = -L./ lua - llua - lpthread - shared
 

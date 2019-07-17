@@ -5,16 +5,19 @@
 
 #define MAGIC_NUMBER_FOR_BUFF 8192 // 1kb ?
 
-char *va(const char *fmt, ...)
+char *va( const char *format, ... )
 {
-    va_list ap;
-    char *buf = (char *)malloc(MAGIC_NUMBER_FOR_BUFF);
+    va_list         argptr;
+    static char     string[256][1024], *s;
+    static int      stringindex = 0;
 
-    va_start(ap, fmt);
-    vsnprintf(buf, MAGIC_NUMBER_FOR_BUFF, fmt, ap);
-    va_end(ap);
+    s = string[stringindex];
+    stringindex = (stringindex + 1) & 255;
+    va_start( argptr, format );
+    vsnprintf( s, sizeof( string[0] ), format, argptr );
+    va_end( argptr );
 
-    return buf;
+    return s;
 }
 
 void PRINT_CONSOLE(const char *fmt, ...)

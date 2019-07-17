@@ -6,8 +6,8 @@
 #ifndef _LJ_SNAP_H
 #define _LJ_SNAP_H
 
-#include "lj_jit.h"
 #include "lj_obj.h"
+#include "lj_jit.h"
 
 #if LJ_HASJIT
 LJ_FUNC void lj_snap_add(jit_State *J);
@@ -21,14 +21,12 @@ LJ_FUNC void lj_snap_grow_map_(jit_State *J, MSize need);
 
 static LJ_AINLINE void lj_snap_grow_buf(jit_State *J, MSize need)
 {
-    if (LJ_UNLIKELY(need > J->sizesnap))
-        lj_snap_grow_buf_(J, need);
+  if (LJ_UNLIKELY(need > J->sizesnap)) lj_snap_grow_buf_(J, need);
 }
 
 static LJ_AINLINE void lj_snap_grow_map(jit_State *J, MSize need)
 {
-    if (LJ_UNLIKELY(need > J->sizesnapmap))
-        lj_snap_grow_map_(J, need);
+  if (LJ_UNLIKELY(need > J->sizesnapmap)) lj_snap_grow_map_(J, need);
 }
 
 #endif

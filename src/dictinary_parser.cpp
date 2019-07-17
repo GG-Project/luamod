@@ -8,7 +8,6 @@
 
 #define DICT_FILE_EXTENSION "txt"
 #define DICT_PATH "%s/addons/luamod/data/lang/%s.%s"
-#define DICT_BUFF_LEN 512
 
 inline int is_string(const char *src)
 {
@@ -88,34 +87,19 @@ int string_is_lang_comment(const char *src)
 // HACK HACK
 // TODO: fix
 // я хз но откуда то появляется 0xdf в конце
-// это нужно исправить а пока будет хак strncpy0 в котором последний символ
-// ставится в 0
+// это нужно исправить а пока будет хак strncpy0 в котором последний символ ставится в 0
 key_value *parse_keyvalue(const char *src)
 {
-    key_value *tmp = (key_value *)Mem_Malloc(luamod_mem_pool, sizeof(key_value));
+    key_value *ptr = (key_value *)Mem_Malloc(luamod_mem_pool, sizeof(key_value));
 
-    char *buff2 = (char *)Mem_Malloc(luamod_mem_pool, DICT_BUFF_LEN);
-    char *buff3 = (char *)Mem_Malloc(luamod_mem_pool, DICT_BUFF_LEN);
+    read_to_symbol(ptr->key, src, ' ', DICT_BUFF_LEN);
+    read_from_to_symbol(ptr->value, src, '"', '"', DICT_BUFF_LEN);
 
-    read_to_symbol(buff2, src, ' ', DICT_BUFF_LEN);
-    read_from_to_symbol(buff3, src, '"', '"', DICT_BUFF_LEN);
+    ptr->next = NULL;
+    
+    ALERT(at_console, "KEY : %s VALUE : %s\n", ptr->key, ptr->value);
 
-    size_t buff2_len = strlen(buff2);
-    size_t buff3_len = strlen(buff3);
-
-    tmp->key = (char *)Mem_Malloc(luamod_mem_pool, buff2_len + 1);
-    tmp->value = (char *)Mem_Malloc(luamod_mem_pool, buff3_len + 1);
-    tmp->next = NULL;
-
-    strncpy0(tmp->key, buff2, buff2_len);
-    strncpy0(tmp->value, buff3, buff3_len);
-
-    ALERT(at_console, "KEY : %s VALUE : %s\n", buff2, buff3);
-
-    Mem_Free(buff2);
-    Mem_Free(buff3);
-
-    return tmp;
+    return ptr;
 }
 
 lang_list *parse_lang_list(const char *src)
@@ -241,7 +225,7 @@ const char *dictionary_find_value(dictionary *dict, const char *lang_code, const
 {
     const char *not_found = "VALUE_NOT_FOUND_OR_ERROR";
 
-    if (!dict || dict == NULL)
+    if (!dict)
         return NULL;
 
     lang_list *ptr;
@@ -268,4 +252,39 @@ const char *dictionary_find_value(dictionary *dict, const char *lang_code, const
     } else {
         return ptr2->value;
     }
+}
+
+void dictionary_deinit( dictionary *dict )
+{
+    if( !dict )
+        return;
+    
+    lang_list *lang_list_ptr = nullptr, *lang_list_ptr_tmp = nullptr;
+    
+    key_value *keyvalue_ptr = nullptr, *keyvalue_ptr_tmp = nullptr;
+
+    lang_list_ptr = dict->lang;
+    
+    while( lang_list_ptr )
+    {
+        
+        lang_list_ptr_tmp = lang_list_ptr;
+
+        keyvalue_ptr = lang_list_ptr_tmp->keyvalue;
+
+        while ( keyvalue_ptr )
+        {
+            keyvalue_ptr_tmp = keyvalue_ptr;
+            keyvalue_ptr = keyvalue_ptr->next;
+            Mem_Free( keyvalue_ptr_tmp );
+        }
+
+        lang_list_ptr = lang_list_ptr->next;
+        Mem_Free( lang_list_ptr_tmp );
+        
+    }
+
+    Mem_Free( dict );
+
+    dict = nullptr;
 }

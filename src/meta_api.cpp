@@ -35,26 +35,21 @@ META_FUNCTIONS gMetaFunctionTable = {
     NULL, // pfnGetEntityAPI		HL SDK; called before game DLL
     NULL, // pfnGetEntityAPI_Post		META; called after game DLL
     GetEntityAPI2, // pfnGetEntityAPI2		HL SDK2; called before game DLL
-    GetEntityAPI2_Post, // pfnGetEntityAPI2_Post	META; called after game
-                        // DLL
-    GetNewDLLFunctions, // pfnGetNewDLLFunctions	HL SDK2; called before game
-                        // DLL
-    GetNewDLLFunctions_Post, // pfnGetNewDLLFunctions_Post	META; called
-                             // after game DLL
-    GetEngineFunctions, // pfnGetEngineFunctions	META; called before HL
-                        // engine
-    GetEngineFunctions_Post, // pfnGetEngineFunctions_Post	META; called
-                             // after HL engine
+    GetEntityAPI2_Post, // pfnGetEntityAPI2_Post	META; called after game DLL
+    GetNewDLLFunctions, // pfnGetNewDLLFunctions	HL SDK2; called before game DLL
+    GetNewDLLFunctions_Post, // pfnGetNewDLLFunctions_Post	META; called after game DLL
+    GetEngineFunctions, // pfnGetEngineFunctions	META; called before HL engine
+    GetEngineFunctions_Post, // pfnGetEngineFunctions_Post	META; called after HL engine
 };
 
-void Parse_And_Load_Lua_Plugins(void);
+void Load_Plugins_From_Config(void);
 
 C_DLLEXPORT int Meta_Attach(PLUG_LOADTIME now, META_FUNCTIONS *pFunctionTable, meta_globals_t *pMGlobals, gamedll_funcs_t *pGamedllFuncs)
 {
     gpMetaGlobals = pMGlobals;
     gpGamedllFuncs = pGamedllFuncs;
 
-    Parse_And_Load_Lua_Plugins();
+    Load_Plugins_From_Config();
 
 #ifdef REHLDS_SUPPORT
     if (meta_init_rehlds_api())

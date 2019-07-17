@@ -21,15 +21,29 @@ int l_pfnWriteCoord(lua_State *L);
 int l_pfnWriteString(lua_State *L);
 int l_pfnWriteEntity(lua_State *L);
 //
+int l_pfnGetInfoKeyBuffer(lua_State *L);
+int l_pfnInfoKeyValue(lua_State *L);
+int l_pfnSetKeyValue(lua_State *L);
+int l_pfnSetClientKeyValue(lua_State *L);
+//
+int l_pfnGetPlayerUserId(lua_State *L);
+//int l_pfnGetPlayerWONId(lua_State *L);
+int l_pfnGetPlayerStats(lua_State *L);
+int l_pfnGetPlayerAuthId(lua_State *L);
+//
 int l_pfnRegister_Cvar(lua_State *L);
 int l_pfnCVarGetFloat(lua_State *L);
 int l_pfnCVarGetString(lua_State *L);
 int l_pfnCVarSetFloat(lua_State *L);
 int l_pfnCVarSetString(lua_State *L);
 //
+int l_pfnIndexOfEdict(lua_State *L);
+//
 int l_pfnRegUserMsg(lua_State *L);
 //
 int l_pfnClientPrintf(lua_State *L);
+//
+int l_pfnQueryClientCvarValue2(lua_State *L);
 //
 #ifdef REHLDS_SUPPORT
 // REHLDS

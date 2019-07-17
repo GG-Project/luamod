@@ -1,16 +1,16 @@
 ##############################################################################
-#LuaJIT top level Makefile for installation.Requires GNU Make.
+# LuaJIT top level Makefile for installation. Requires GNU Make.
 #
-#Please read doc / install.html before changing any variables !
+# Please read doc/install.html before changing any variables!
 #
-#Suitable for POSIX platforms(Linux, *BSD, OSX etc.).
-#Note : src / Makefile has many more configurable options.
+# Suitable for POSIX platforms (Linux, *BSD, OSX etc.).
+# Note: src/Makefile has many more configurable options.
 #
-# #### #This Makefile is NOT useful for Windows !#### #
-#For MSVC, please follow the instructions given in src / msvcbuild.bat.
-#For MinGW and Cygwin, cd to src and run make with the Makefile there.
+# ##### This Makefile is NOT useful for Windows! #####
+# For MSVC, please follow the instructions given in src/msvcbuild.bat.
+# For MinGW and Cygwin, cd to src and run make with the Makefile there.
 #
-#Copyright(C) 2005 - 2017 Mike Pall.See Copyright Notice in luajit.h
+# Copyright (C) 2005-2017 Mike Pall. See Copyright Notice in luajit.h
 ##############################################################################
 
 MAJVER=  2
@@ -22,8 +22,8 @@ ABIVER=  5.1
 
 ##############################################################################
 #
-#Change the installation path as needed.This automatically adjusts
-#the paths in src / luaconf.h, too.Note : PREFIX must be an absolute path !
+# Change the installation path as needed. This automatically adjusts
+# the paths in src/luaconf.h, too. Note: PREFIX must be an absolute path!
 #
 export PREFIX= /usr/local
 export MULTILIB= lib
@@ -142,24 +142,25 @@ install: $(INSTALL_DEP)
 uninstall:
 	@echo "==== Uninstalling LuaJIT $(VERSION) from $(PREFIX) ===="
 	$(UNINSTALL) $(INSTALL_T) $(INSTALL_STATIC) $(INSTALL_DYN) $(INSTALL_SHORT1) $(INSTALL_SHORT2) $(INSTALL_MAN)/$(FILE_MAN) $(INSTALL_PC)
-	for file in $(FILES_JITLIB);
-do
-    $(UNINSTALL) $(INSTALL_JITLIB) / $$file;
-          done
-	for file in $(FILES_INC);
-          do
-              $(UNINSTALL) $(INSTALL_INC) / $$file;
-          done $(LDCONFIG) $(INSTALL_LIB) $(RMDIR) $(UNINSTALL_DIRS) ||
-              : @echo "==== Successfully uninstalled LuaJIT $(VERSION) from $(PREFIX) ===="
+	for file in $(FILES_JITLIB); do \
+	  $(UNINSTALL) $(INSTALL_JITLIB)/$$file; \
+	  done
+	for file in $(FILES_INC); do \
+	  $(UNINSTALL) $(INSTALL_INC)/$$file; \
+	  done
+	$(LDCONFIG) $(INSTALL_LIB)
+	$(RMDIR) $(UNINSTALL_DIRS) || :
+	@echo "==== Successfully uninstalled LuaJIT $(VERSION) from $(PREFIX) ===="
 
-                ##############################################################################
+##############################################################################
 
-                amalg : @echo "Building LuaJIT $(VERSION)" $(MAKE)
-                        - C src amalg
+amalg:
+	@echo "Building LuaJIT $(VERSION)"
+	$(MAKE) -C src amalg
 
-                        clean : $(MAKE)
-                                - C src clean
+clean:
+	$(MAKE) -C src clean
 
-                                      .PHONY : all install amalg clean
+.PHONY: all install amalg clean
 
-                                               ##############################################################################
+##############################################################################

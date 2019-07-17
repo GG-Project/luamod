@@ -1,3 +1,4 @@
+#pragma once
 #include "luamod.h"
 #include <extdll.h>
 #include <meta_api.h>
@@ -47,16 +48,15 @@ typedef struct luamod_plugin_s {
 
     qboolean running; // plugin is running or not ?
     qboolean registred; // hack for check register_plugin
-    struct luamod_plugin_s *next;
     luamod_client_callback_t *client_commands_callbacks;
     luamod_mem_debug debug_mem; // maybe store plugin used mem ?
-} luamod_plugin;
+    struct luamod_plugin_s *next;
+} luamod_plugin_t;
 #pragma pack(0)
 
 #undef MAX_LEN
 
-extern luamod_plugin *plugins_list;
-
-luamod_plugin *find_plugin_by_luastate(lua_State *L);
+luamod_plugin_t *find_plugin_by_luastate(lua_State *L);
 void plugin_safecall(lua_State *L, int nargs, int rets);
 int plugin_have_event(lua_State *L, const char *event);
+int plugin_clcmd_handler(luamod_plugin_t *ptr, edict_t *ed);

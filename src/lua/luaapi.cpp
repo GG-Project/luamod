@@ -3,6 +3,7 @@
 #include <meta_api.h>
 
 #include "lu_engfuncs.hpp"
+#include "lu_clcmds.h"
 #include "lu_luamod.h"
 //#include "lu_module.h"
 #include "lu_offset.h"
@@ -25,4 +26,5 @@ void loadLuaApi(lua_State *L)
     lu_output::init_api(L);
     lu_engfuncs::init_api(L);
     lu_sqlite::init_api(L);
+    lu_clcmds::init_api(L);
 }
