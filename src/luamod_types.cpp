@@ -57,13 +57,13 @@ void lua_pushedict(lua_State *L, edict_t *ed)
     type->pointer = ed;
 }
 
-edict_t *luaL_checkedict(lua_State *L, int index, int can_nullptr)
+edict_t *luaL_checkedict(lua_State *L, int index, bool can_nullptr)
 {
     // maybe function can pass nullptr in edict ?
     if(can_nullptr && lua_touserdata(L, index) == nullptr)
         return nullptr;
 
-    if(!lua_islightuserdata(L, index) && !lua_isuserdata(L, index))
+    if(!lua_isuserdata(L, index))
     {
         luaL_argerror(L, index, "not a edict");
         return nullptr;

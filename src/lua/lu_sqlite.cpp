@@ -1,3 +1,4 @@
+#if 0
 #include "luai.h"
 #include <extdll.h>
 #include <meta_api.h>
@@ -132,3 +133,4 @@ int lu_sqlite::sqlite_db_close(lua_State *L)
 
     return 0;
 }
+#endif

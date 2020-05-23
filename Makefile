@@ -18,7 +18,7 @@ DLLNAME=luamod_mm
 
 LUAMOD_PATCH = dev
 
-LUAMOD_VERMAIN = 0.3.1
+LUAMOD_VERMAIN = 0.3.2
 
 CC?=gcc
 CXX?=g++
@@ -31,23 +31,24 @@ endif
 COMPILER_VER_CC = $(shell $(CC) -dumpversion)
 COMPILER_VER_CXX = $(shell $(CC) -dumpversion)
 
-OPT_CFLAGS = -O3 -flto -funroll-loops -fomit-frame-pointer -fno-stack-protector -fPIC -Wall
+OPT_CFLAGS = -O2 -flto -fno-stack-protector -fPIC -Wall
 
 BASE_CFLAGS = -D__USE_GNU -std=gnu++11 -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\" -DLUAMOD_PATCH=\"$(LUAMOD_PATCH)\"
 
 ARCH=$(shell uname -m)
 
 LUAMOD_COMMIT := $(firstword $(shell git rev-parse --short=6 HEAD) unknown)
-	
+
 ifeq ($(ARCH), x86_64)
 ARCH = i686
-ARCH_CFLAGS +=-m32 -msse3 -march=i686 -mtune=generic
+ARCH_CFLAGS += -m32 -march=i686 -mtune=generic -msse3 -msse2
+LUA_FLAGS = -m32
 else ifeq ($(ARCH), aarch64)
 ARCH_CFLAGS += -march=native
 #ARCH = ARCH_UNAME
 XASH3D = 1
 else ifeq (, $(findstring arm,$(ARCH_UNAME)))
-ARCH_CFLAGS +=
+ARCH_CFLAGS += -march=native
 #ARCH = ARCH_UNAME
 XASH3D = 1
 endif
@@ -80,10 +81,9 @@ CFLAGS = $(BUILD_TYPE_CFLAGS) $(BASE_CFLAGS) $(OPT_CFLAGS) $(ARCH_CFLAGS)
 
 INCLUDE=-I. -I$(DLL_SRCDIR) -I$(HLSDK)/common -I$(HLSDK)/dlls -I$(HLSDK)/engine \
                 -I$(HLSDK)/game_shared -I$(HLSDK)/pm_shared -I$(HLSDK)/public -I$(METAMOD) -I$(LUAMOD_API) -I$(LUA)
-	
-LDFLAGS=-L $(LUA) -lluajit -shared -lsqlite3 -lpthread
 
-#LDFLAGS = -L./ lua - llua - lpthread - shared
+LDFLAGS=-L $(LUA) -lluajit -shared -lpthread
+#LDFLAGS=-L $(LUA) -lluajit -shared -lsqlite3 -lpthread
 
 DO_CC=$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
@@ -96,7 +96,7 @@ SRC = $(wildcard src/*.cpp) $(wildcard src/lua/*.cpp)
 
 OBJ := $(SRC:$(DLL_SRCDIR)/%.cpp=$(DLL_OBJDIR)/%.o)
 
-$(DLLNAME)_$(ARCH).$(SHLIBEXT) : neat depend $(OBJ)	
+$(DLLNAME)_$(ARCH).$(SHLIBEXT) : lua neat depend $(OBJ)
 	$(CXX) $(CFLAGS) $(OBJ) $(LDFLAGS) -o $(DLL_OBJDIR)/$@
 
 neat:
@@ -110,8 +110,11 @@ clean: depend
 	-rm -f $(DLL_OBJDIR)/$(DLLNAME)_$(ARCH).$(SHLIBEXT)
 	-rm -f $(DLL_OBJDIR)/Rules.depend
 
+lua:
+	cd $(LUA) && $(MAKE) BUILDMODE=static CFLAGS=$(LUA_FLAGS) LDFLAGS=$(LUA_FLAGS)
+
 depend: $(DLL_OBJDIR)/Rules.depend
-	
+
 $(DLL_OBJDIR)/Rules.depend: $(SRCFILES) $(DLL_OBJDIR)
 	$(CXX) -MM $(INCLUDE) $(SRC) $(CFLAGS) | sed "s;\(^[^         ]*\):\(.*\);$(DLL_OBJDIR)/\1:\2;" > $@
 

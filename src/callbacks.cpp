@@ -52,7 +52,6 @@ qboolean pfnClientConnect(edict_t *pEntity, const char *pszName, const char *psz
 
 void pfnClientDisconnect(edict_t *pEntity)
 {
-
     luamod_plugin_t *ptr = plugins_list;
 
     while (ptr != nullptr) {

@@ -67,7 +67,8 @@ luamod_pev_offset_t offsets[] = {
     { "pev_takedamage", offsetof(entvars_t, takedamage) },
     { "pev_deadflag", offsetof(entvars_t, deadflag) },
     { "pev_view_ofs", offsetof(entvars_t, view_ofs) },
-    { "pev_", offsetof(entvars_t, ) }
+    //TODO make it
+    { "pev_", offsetof(entvars_t, view_ofs) }
 };
 
 

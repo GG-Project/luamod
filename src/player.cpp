@@ -12,9 +12,6 @@ LUAMOD_PLAYER_DATA PLAYERS[32];
 void LUAMOD_PRINT_DEBUG_PLAYER_DATA()
 {
     for (int i = 0; i < gpGlobals->maxClients; i++) {
-        // ALERT(at_console, "[LM] Name : %s Address : %s AuthID = %s PutInServer
-        // %d\n", PLAYERS[i].player_name, PLAYERS[i].player_address,
-        // PLAYERS[i].player_authid, PLAYERS[i].player_put_on_server);
         ALERT(at_console, "[LM] Name : %s AUTHID : %s Address : %s PutInServer %d\n", PLAYERS[i].player_name, GETPLAYERAUTHID(PLAYERS[i].player_edict), PLAYERS[i].player_address, PLAYERS[i].player_put_on_server);
     }
 }

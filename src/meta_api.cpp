@@ -15,11 +15,11 @@ plugin_info_t Plugin_info = {
     "LuaMod", // name
     LUAMOD_VERSION, // version
     __DATE__, // date
-    "TheEVolk", // author
-    "https://github.com/Elektro-Volk/luamod", // url
+    "Mr0maks", // author
+    "https://github.com/Mr0maks/luamod", // url
     "LM", // logtag
     PT_ANYTIME, // (when) loadable
-    PT_ANYTIME, // (when) unloadable
+    PT_NEVER, // (when) unloadable
 };
 
 void Meta_Init(void) { g_meta_init = TRUE; }

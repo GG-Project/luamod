@@ -4,3 +4,6 @@
 [submodule "metamod"]
 	path = metamod
 	url = https://github.com/theAsmodai/metamod-r.git
+[submodule "luajit"]
+	path = luajit
+	url = https://github.com/LuaJIT/LuaJIT.git

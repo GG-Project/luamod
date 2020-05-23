@@ -17,9 +17,6 @@ void lm_utils::init_api(lua_State *L)
     // players[]
     lua_register(L, "is_player", l_is_player);
     lua_register(L, "get_entity_keyvalue", l_get_entity_key_value);
-    lua_register(L, "write_log", l_write_logfile);
-    lua_register(L, "dictinary_init", l_dictinary_init);
-    lua_register(L, "dictinary_find_value", l_dictinary_find_value);
 }
 
 int lm_utils::l_hud_message(lua_State *L)
@@ -52,61 +49,7 @@ int lm_utils::l_is_player(lua_State *L)
 
 int lm_utils::l_get_entity_key_value(lua_State *L)
 {
-    // ALERT( at_console, "Hmm interesting : %s\n",
     // g_engfuncs.pfnGetInfoKeyBuffer((edict_t *)lua_touserdata(L, 1)));
     lua_pushstring(L, ENTITY_KEYVALUE(luaL_checkedict(L, 1, 0), (char *)luaL_checkstring(L, 2)));
-    return 1;
-}
-
-#include <stdio.h>
-
-#define LOGFILE_PATH "%s/addons/luamod/%s"
-
-int lm_utils::l_write_logfile(lua_State *L)
-{
-    FILE *file = fopen(va(LOGFILE_PATH, MOD_PATH, luaL_checkstring(L, 1)), "a");
-
-    if (!file) {
-        luaL_error(L, "write_log: cannot open file : %s : %s\n", va(LOGFILE_PATH, MOD_PATH, luaL_checkstring(L, 1), ferror(file)));
-        return 0;
-    }
-
-    fseek(file, 0, SEEK_END);
-
-    fprintf(file, "%s", luaL_checkstring(L, 2));
-
-    fclose(file);
-
-    return 1;
-}
-
-#include <dictinary_parser.h>
-
-int lm_utils::l_dictinary_init(lua_State *L)
-{
-    const char *filename = luaL_checkstring(L, 1);
-    dictionary *dict = dictionary_init(filename);
-
-    if (!dict) {
-        luaL_error(L, "Error while opening/parsing dictinary file : %s\n", filename);
-        return 0;
-    }
-
-    lua_pushlightuserdata(L, dict);
-    return 1;
-}
-
-int lm_utils::l_dictinary_find_value(lua_State *L)
-{
-    const char *key = luaL_checkstring(L, 2);
-    const char *lang_code = luaL_checkstring(L, 3);
-    const char *value = dictionary_find_value((dictionary *)lua_touserdata(L, 1), key, lang_code);
-
-    if (!value) {
-        luaL_error(L, "Error while finding value by key : %s in lang code : %s in file (TODO)\n", key, lang_code);
-        return 0;
-    }
-
-    lua_pushstring(L, value);
     return 1;
 }
