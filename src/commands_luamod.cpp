@@ -38,7 +38,9 @@ void cmd_luamod_version()
 #endif
     PRINT_CONSOLE("Compiled with %s\n", LM_buildhlsdk());
     PRINT_CONSOLE("Compiled with %s\n", LM_buildlua());
+#if 0
     PRINT_CONSOLE("Compiled with libsqlite3 %s\n", sqlite3_version);
+#endif
 }
 
 void Plugin_List();
