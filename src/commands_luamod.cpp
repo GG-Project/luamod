@@ -3,7 +3,9 @@
 #include <meta_api.h>
 #include <utils.h>
 
+#if 0
 #include <sqlite3.h>
+#endif
 
 #include "zone.h"
 
@@ -15,7 +17,7 @@ void cmd_luamod_usage(void)
   PRINT_CONSOLE("   cvars            - list cvars currently registred by luamod or plugins\n");
   // PRINT_CONSOLE("   modules          - list modules \n");
   PRINT_CONSOLE("   memlist          - zone memory allocator statistic\n");
-  PRINT_CONSOLE("   sqlite3          - sqlite memory info\n");
+  // PRINT_CONSOLE("   sqlite3          - sqlite memory info\n");
   PRINT_CONSOLE("   load <name>      - load a plugin with the given name\n");
   PRINT_CONSOLE("   unload <name>    - unload a plugin with the given name\n");
   PRINT_CONSOLE("   restart <name>   - restart a plugin with the given name\n");
@@ -60,6 +62,7 @@ void cmd_luamod_modules()
 
 void cmd_luamod_sqlite3()
 {
+#if 0
     sqlite3_config(SQLITE_CONFIG_MEMSTATUS, 1);
     sqlite3_config(SQLITE_CONFIG_SERIALIZED);
     sqlite3_initialize();
@@ -69,6 +72,7 @@ void cmd_luamod_sqlite3()
 
     PRINT_CONSOLE("Sqlite3 memory ^1%s\n", Q_memprint(used));
     PRINT_CONSOLE("Sqlite3 memory peak ^1%s\n", Q_memprint(peak));
+#endif
 }
 
 void Plugin_Load(const char *filename);
@@ -143,8 +147,8 @@ void LuaMod_COMMAND(void)
     else if (!strcasecmp(cmd, "memlist")) {
         Mem_PrintList(1 << 30);
         Mem_PrintStats();
-    } else if (!strcasecmp(cmd, "sqlite3"))
-        cmd_luamod_sqlite3();
+    } //else if (!strcasecmp(cmd, "sqlite3"))
+        //cmd_luamod_sqlite3();
     else if (!strcasecmp(cmd, "load"))
         cmd_luamod_load();
     else if (!strcasecmp(cmd, "unload"))
