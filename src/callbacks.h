@@ -18,6 +18,6 @@ void pfnPlayerPostThink( edict_t *pEntity );
 //
 void pfnServerCommand(const char *str);
 
-// new api's
+// new api
 
 void pfnCvarValue2(const edict_t *pEntity, int requestID, const char *pszCvarName, const char *pszValue);

@@ -192,6 +192,22 @@ void pfnPlayerPostThink(edict_t *pEntity)
   RETURN_META(MRES_HANDLED);
 }
 
+void pfnStartFrame( void )
+{
+    luamod_plugin_t *ptr = plugins_list;
+
+    while (ptr != nullptr) {
+
+        if (plugin_have_event(ptr->L, "pfnStartFrame")) {
+            plugin_safecall(ptr->L, 0, 0);
+        }
+
+        ptr = ptr->next;
+    }
+
+    RETURN_META(MRES_HANDLED);
+}
+
 void pfnServerCommand(const char *str)
 {
 }

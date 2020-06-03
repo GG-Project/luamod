@@ -13,19 +13,9 @@ extern LUAMOD_PLAYER_DATA PLAYERS[32];
 
 void lm_utils::init_api(lua_State *L)
 {
-    lua_register(L, "hud_message_all", l_hud_message);
     // players[]
     lua_register(L, "is_player", l_is_player);
     lua_register(L, "get_entity_keyvalue", l_get_entity_key_value);
-}
-
-int lm_utils::l_hud_message(lua_State *L)
-{
-    int gmsgHudText = REG_USER_MSG("HudText", -1);
-    MESSAGE_BEGIN(MSG_BROADCAST, gmsgHudText);
-    WRITE_STRING(luaL_checkstring(L, 1));
-    MESSAGE_END();
-    return 0;
 }
 
 // is_player(E) ?

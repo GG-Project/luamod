@@ -26,30 +26,6 @@ void luaL_push_vec3_t(lua_State *L, float *vector)
     lua_settable(L, -3);
 }
 
-const float *luaL_check_vec3_t(lua_State *L, int index, int can_nullptr)
-{
-        float vector[3] = { 0.0f, 0.0f, 0.0f };
-
-        lua_pushnil(L);
-
-        if (lua_istable(L, index))
-        {
-            for ( int i = 0; lua_next(L, 3) && i < 3; i++) {
-                lua_pushvalue(L, -1);
-                vector[i] = luaL_checknumber(L, -1);
-                lua_pop(L, 2);
-            }
-
-            return vector;
-        } else if(lua_isnil(L, index) && can_nullptr)
-        {
-            return nullptr;
-        } else {
-            luaL_argerror(L, index, "not a vec3_t");
-            return nullptr;
-        }
-}
-
 void lua_pushedict(lua_State *L, edict_t *ed)
 {
     luamod_type *type = (luamod_type*)lua_newuserdata(L, sizeof(luamod_type));

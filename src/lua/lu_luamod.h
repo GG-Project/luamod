@@ -7,5 +7,4 @@
 
 namespace lu_luamod {
 void init_api(lua_State *L);
-int l_version(lua_State *L);
 }; // namespace lu_luamod
