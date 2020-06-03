@@ -28,9 +28,7 @@ void luaL_push_vec3_t(lua_State *L, float *vector)
 
 void lua_pushedict(lua_State *L, edict_t *ed)
 {
-    luamod_type *type = (luamod_type*)lua_newuserdata(L, sizeof(luamod_type));
-    type->type = EDICT;
-    type->pointer = ed;
+    lua_pushlightuserdata(L, ed);
 }
 
 edict_t *luaL_checkedict(lua_State *L, int index, bool can_nullptr)
@@ -45,19 +43,13 @@ edict_t *luaL_checkedict(lua_State *L, int index, bool can_nullptr)
         return nullptr;
     }
 
-    luamod_type *type = (luamod_type*)lua_touserdata(L, index);
+    edict_t *ed = (edict_t*)lua_touserdata(L, index);
 
-    if(type->type != EDICT)
-    {
-        luaL_argerror(L, index, "not a edict");
-        return nullptr;
-    }
-
-    if(type->pointer == nullptr && !can_nullptr)
+    if(ed == nullptr && !can_nullptr)
     {
         luaL_argerror(L, index, "edict pointer == nullptr");
         return nullptr;
     }
 
-    return (edict_t*)type->pointer;
+    return ed;
 }
