@@ -147,45 +147,6 @@ void plugin_safecall(lua_State *L, int nargs, int rets)
     }
 }
 
-luamod_client_callback_t *plugin_have_clcmd_handler(luamod_plugin_t *plugin, const char *clcmd)
-{
-  luamod_client_callback_t *ptr = plugin->client_commands_callbacks;
-
-  while(ptr != NULL)
-    {
-      if(!strncasecmp(clcmd, ptr->client_command, strlen(ptr->client_command)))
-        return ptr;
-
-      ptr = ptr->next;
-    }
-
-  return NULL;
-}
-
-int plugin_clcmd_handler(luamod_plugin_t *ptr, edict_t *ed)
-{
-
-  luamod_client_callback_t *cl_cmd = plugin_have_clcmd_handler(ptr, CMD_ARGS());
-
-  if(cl_cmd == NULL)
-    return 0;
-
-  lua_getglobal(ptr->L, cl_cmd->client_function);
-
-  lua_pushlightuserdata(ptr->L, ed);
-  // Push table
-  lua_newtable(ptr->L);
-  for (int i = 0; i < CMD_ARGC(); i++) {
-      lua_pushnumber(ptr->L, i + 1); // Key
-      lua_pushstring(ptr->L, CMD_ARGV(i)); // Value
-      lua_settable(ptr->L, -3);
-  }
-  lua_pushstring(ptr->L, CMD_ARGS());
-  plugin_safecall(ptr->L, 3, 0);
-
-  return 1;
-}
-
 void Plugin_List()
 {
     luamod_plugin_t *ptr = plugins_list;

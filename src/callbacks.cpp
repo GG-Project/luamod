@@ -210,6 +210,17 @@ void pfnStartFrame( void )
 
 void pfnServerCommand(const char *str)
 {
+    luamod_plugin_t *ptr = plugins_list;
+
+    while (ptr != nullptr) {
+
+        if (plugin_have_event(ptr->L, "pfnCvarValue2")) {
+            lua_pushstring(ptr->L, str);
+            plugin_safecall(ptr->L, 1, 0);
+        }
+
+        ptr = ptr->next;
+    }
 }
 
 void pfnCvarValue2(const edict_t *pEntity, int requestID, const char *pszCvarName, const char *pszValue)
