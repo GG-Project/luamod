@@ -214,7 +214,7 @@ enginefuncs_t g_EngineFunctionsTable_Post = {
     NULL, // pfnTraceTexture()
     NULL, // pfnTraceSphere()
     NULL, // pfnGetAimVector()
-    NULL, // pfnServerCommand()
+    pfnServerCommand, // pfnServerCommand()
     NULL, // pfnServerExecute()
     NULL, // pfnClientCommand()
     NULL, // pfnParticleEffect()
