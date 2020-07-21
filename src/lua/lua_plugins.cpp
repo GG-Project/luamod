@@ -8,8 +8,6 @@
 #include "luai.h"
 #include "utils.h"
 
-#include <zone_luamod_mem.h>
-
 #define PLUGINS_CONFIG_PATH "%s/addons/luamod/plugins.ini"
 #define PLUGINS_MAIN_LUA "%s/addons/luamod/plugins/%s/main.lua"
 #define PLUGINS_MAIN_LUAC "%s/addons/luamod/plugins/%s/main.luac"
@@ -152,7 +150,7 @@ void Plugin_List()
     luamod_plugin_t *ptr = plugins_list;
 
     while (ptr != NULL) {
-        ALERT(at_console, "[LM] Plugin %s %s %s %s %s\n", ptr->author, ptr->name, ptr->version, ptr->description, Q_memprint(ptr->debug_mem.used_now));
+        ALERT(at_console, "[LM] Plugin %s %s %s %s\n", ptr->author, ptr->name, ptr->version, ptr->description);
         ptr = ptr->next;
     }
 
@@ -204,7 +202,7 @@ void Plugin_Load(const char *filename)
 	return;
       }
 
-    ptr = (luamod_plugin_t *)Mem_Calloc(luamod_mem_pool, sizeof(luamod_plugin_t));
+    ptr = (luamod_plugin_t *)malloc(sizeof(luamod_plugin_t));
 
     strncpy(ptr->filename, filename, sizeof(ptr->filename));
 
@@ -245,23 +243,23 @@ void Plugin_Load(const char *filename)
 
 void Plugin_Close( const char *filename )
 {
-    luamod_plugin_t *ptr_main = find_plugin_by_name(filename);
-
-    remove_plugin_from_list(ptr_main);
-
-    lua_close(ptr_main->L);
-
-    Mem_Free(ptr_main);
-}
-
-void Plugin_Restart( const char *filename )
-{
     if(!find_plugin_by_name(filename))
     {
         ALERT(at_console, "[LM] Error while close plugin %s : plugin not loaded\n", filename);
         return;
     }
 
+    luamod_plugin_t *ptr_main = find_plugin_by_name(filename);
+
+    remove_plugin_from_list(ptr_main);
+
+    lua_close(ptr_main->L);
+
+    free(ptr_main);
+}
+
+void Plugin_Restart( const char *filename )
+{
     Plugin_Close( filename );
     Plugin_Load( filename );
 }

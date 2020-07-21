@@ -11,8 +11,6 @@ const char *LM_buildcompiler(void);
 const char *LM_buildcompilerversion(void);
 #endif
 
-// пусть пока тут полежит
-#if defined XASH3D
-#else
+#if !defined( XASH3D )
 #define GOLDSRC_PRIVATE
 #endif

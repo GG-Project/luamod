@@ -4,7 +4,7 @@
 
 DLL_FUNCTIONS g_DllFunctionTable = {
     GameDLLInit, // pfnGameInit
-    NULL, // pfnSpawn
+    pfnSpawn, // pfnSpawn
     NULL, // pfnThink
     NULL, // pfnUse
     NULL, // pfnTouch
@@ -18,12 +18,12 @@ DLL_FUNCTIONS g_DllFunctionTable = {
     NULL, // pfnSaveGlobalState
     NULL, // pfnRestoreGlobalState
     NULL, // pfnResetGlobalState
-    NULL, // pfnClientConnect
-    NULL, // pfnClientDisconnect
+    pfnClientConnect, // pfnClientConnect
+    pfnClientDisconnect, // pfnClientDisconnect
     pfnClientKill, // pfnClientKill
-    NULL, // pfnClientPutInServer
+    pfnClientPutInServer, // pfnClientPutInServer
     pfnClientCommand, // pfnClientCommand
-    NULL, // pfnClientUserInfoChanged
+    pfnClientUserInfoChanged, // pfnClientUserInfoChanged
     NULL, // pfnServerActivate
     NULL, // pfnServerDeactivate
     pfnPlayerPreThink, // pfnPlayerPreThink
@@ -71,12 +71,12 @@ DLL_FUNCTIONS g_DllFunctionTable_Post = {
     NULL, // pfnSaveGlobalState
     NULL, // pfnRestoreGlobalState
     NULL, // pfnResetGlobalState
-    pfnClientConnect, // pfnClientConnect
-    pfnClientDisconnect, // pfnClientDisconnect
+    NULL, // pfnClientConnect
+    NULL, // pfnClientDisconnect
     NULL, // pfnClientKill
-    pfnClientPutInServer, // pfnClientPutInServer
+    NULL, // pfnClientPutInServer
     NULL, // pfnClientCommand
-    pfnClientUserInfoChanged, // pfnClientUserInfoChanged
+    NULL, // pfnClientUserInfoChanged
     NULL, // pfnServerActivate
     NULL, // pfnServerDeactivate
     NULL, // pfnPlayerPreThink
@@ -109,8 +109,7 @@ DLL_FUNCTIONS g_DllFunctionTable_Post = {
 };
 
 NEW_DLL_FUNCTIONS g_NewDllFunctionTable = {
-    NULL, //! pfnOnFreeEntPrivateData()	Called right before the object's memory
-          //! is freed.  Calls its destructor.
+    NULL, //! pfnOnFreeEntPrivateData()	Called right before the object's memory is freed.  Calls its destructor.
     NULL, //! pfnGameShutdown()
     NULL, //! pfnShouldCollide()
     NULL, //! pfnCvarValue()
@@ -118,8 +117,7 @@ NEW_DLL_FUNCTIONS g_NewDllFunctionTable = {
 };
 
 NEW_DLL_FUNCTIONS g_NewDllFunctionTable_Post = {
-    NULL, //! pfnOnFreeEntPrivateData()	Called right before the object's memory
-          //! is freed.  Calls its destructor.
+    NULL, //! pfnOnFreeEntPrivateData()	Called right before the object's memory is freed.  Calls its destructor.
     NULL, //! pfnGameShutdown()
     NULL, //! pfnShouldCollide()
     NULL, //! pfnCvarValue()

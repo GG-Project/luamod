@@ -6,9 +6,6 @@
 #include <meta_api.h>
 #include <string.h>
 
-#include "zone.h"
-#include "zone_luamod_mem.h"
-
 char MOD_PATH[64];
 
 extern bool g_meta_init;
@@ -49,10 +46,4 @@ C_DLLEXPORT void WINAPI GiveFnptrsToDll(enginefuncs_t *pengfuncsFromEngine, glob
 
     if (g_meta_init)
         ALERT(at_console, "[LM] Metamod api init\n");
-
-    ALERT(at_console, "[LM] Init zone memory allocator\n");
-
-    Memory_Init();
-
-    Memory_Pools_Init();
 }

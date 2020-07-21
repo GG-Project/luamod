@@ -1,13 +1,11 @@
 #include "build.h"
 #include <extdll.h>
 #include <meta_api.h>
-#include <utils.h>
+#include "utils.h"
 
 #if 0
 #include <sqlite3.h>
 #endif
-
-#include "zone.h"
 
 void cmd_luamod_usage(void)
 {
@@ -16,7 +14,6 @@ void cmd_luamod_usage(void)
   PRINT_CONSOLE("   list             - list plugins currently loaded\n");
   PRINT_CONSOLE("   cvars            - list cvars currently registred by luamod or plugins\n");
   // PRINT_CONSOLE("   modules          - list modules \n");
-  PRINT_CONSOLE("   memlist          - zone memory allocator statistic\n");
   // PRINT_CONSOLE("   sqlite3          - sqlite memory info\n");
   PRINT_CONSOLE("   load <name>      - load a plugin with the given name\n");
   PRINT_CONSOLE("   unload <name>    - unload a plugin with the given name\n");
@@ -144,10 +141,7 @@ void LuaMod_COMMAND(void)
       cmd_luamod_cvarlist();
     //  else if (!strcasecmp(cmd, "modules"))
     //    cmd_luamod_modules();
-    else if (!strcasecmp(cmd, "memlist")) {
-        Mem_PrintList(1 << 30);
-        Mem_PrintStats();
-    } //else if (!strcasecmp(cmd, "sqlite3"))
+    //else if (!strcasecmp(cmd, "sqlite3"))
         //cmd_luamod_sqlite3();
     else if (!strcasecmp(cmd, "load"))
         cmd_luamod_load();

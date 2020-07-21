@@ -10,11 +10,107 @@ extern luamod_plugin_t *plugins_list;
 
 void GameDLLInit(void)
 {
-    RETURN_META(MRES_IGNORED);
+    RETURN_META(MRES_HANDLED);
 }
 
-int pfnSpawn(edict_t *pent)
+int pfnSpawn(edict_t *pEntity)
 {
+    luamod_plugin_t *ptr = plugins_list;
+
+    while (ptr != nullptr) {
+
+        if (plugin_have_event(ptr->L, "pfnSpawn")) {
+            lua_pushedict(ptr->L, pEntity);
+            plugin_safecall(ptr->L, 1, 0);
+        }
+
+        ptr = ptr->next;
+    }
+    RETURN_META_VALUE(MRES_HANDLED, 0);
+}
+
+void pfnThink(edict_t *pEntity)
+{
+    luamod_plugin_t *ptr = plugins_list;
+
+    while (ptr != nullptr) {
+
+        if (plugin_have_event(ptr->L, "pfnThink")) {
+            lua_pushedict(ptr->L, pEntity);
+            plugin_safecall(ptr->L, 1, 0);
+        }
+
+        ptr = ptr->next;
+    }
+    RETURN_META(MRES_HANDLED);
+}
+
+void pfnUse(edict_t *pEntity_Used, edict_t *pEntity_Other)
+{
+    luamod_plugin_t *ptr = plugins_list;
+
+    while (ptr != nullptr) {
+
+        if (plugin_have_event(ptr->L, "pfnUse")) {
+            lua_pushedict(ptr->L, pEntity_Used);
+            lua_pushedict(ptr->L, pEntity_Other);
+            plugin_safecall(ptr->L, 2, 0);
+        }
+
+        ptr = ptr->next;
+    }
+    RETURN_META(MRES_HANDLED);
+}
+
+void pfnTouch(edict_t *pEntity_Used, edict_t *pEntity_Other)
+{
+    luamod_plugin_t *ptr = plugins_list;
+
+    while (ptr != nullptr) {
+
+        if (plugin_have_event(ptr->L, "pfnTouch")) {
+            lua_pushedict(ptr->L, pEntity_Used);
+            lua_pushedict(ptr->L, pEntity_Other);
+            plugin_safecall(ptr->L, 2, 0);
+        }
+
+        ptr = ptr->next;
+    }
+    RETURN_META(MRES_HANDLED);
+}
+
+void pfnBlocked(edict_t *pEntity_Used, edict_t *pEntity_Other)
+{
+    luamod_plugin_t *ptr = plugins_list;
+
+    while (ptr != nullptr) {
+
+        if (plugin_have_event(ptr->L, "pfnBlocked")) {
+            lua_pushedict(ptr->L, pEntity_Used);
+            lua_pushedict(ptr->L, pEntity_Other);
+            plugin_safecall(ptr->L, 2, 0);
+        }
+
+        ptr = ptr->next;
+    }
+    RETURN_META(MRES_HANDLED);
+}
+
+void pfnKeyValue(edict_t *pEntity, KeyValueData *pkvd)
+{
+    luamod_plugin_t *ptr = plugins_list;
+
+    while (ptr != nullptr) {
+
+        if (plugin_have_event(ptr->L, "pfnKeyValue")) {
+            lua_pushedict(ptr->L, pEntity);
+            lua_pushlightuserdata(ptr->L, (void*)pkvd);
+            plugin_safecall(ptr->L, 2, 0);
+        }
+
+        ptr = ptr->next;
+    }
+    RETURN_META(MRES_HANDLED);
 }
 
 #include "utils.h"
@@ -208,13 +304,45 @@ void pfnStartFrame( void )
     RETURN_META(MRES_HANDLED);
 }
 
+void pfnParmsNewLevel( void )
+{
+    luamod_plugin_t *ptr = plugins_list;
+
+    while (ptr != nullptr) {
+
+        if (plugin_have_event(ptr->L, "pfnParmsNewLevel")) {
+            plugin_safecall(ptr->L, 0, 0);
+        }
+
+        ptr = ptr->next;
+    }
+
+    RETURN_META(MRES_HANDLED);
+}
+
+void pfnParmsChangeLevel( void )
+{
+    luamod_plugin_t *ptr = plugins_list;
+
+    while (ptr != nullptr) {
+
+        if (plugin_have_event(ptr->L, "pfnParmsChangeLevel")) {
+            plugin_safecall(ptr->L, 0, 0);
+        }
+
+        ptr = ptr->next;
+    }
+
+    RETURN_META(MRES_HANDLED);
+}
+
 void pfnServerCommand(const char *str)
 {
     luamod_plugin_t *ptr = plugins_list;
 
     while (ptr != nullptr) {
 
-        if (plugin_have_event(ptr->L, "pfnCvarValue2")) {
+        if (plugin_have_event(ptr->L, "pfnServerCommand")) {
             lua_pushstring(ptr->L, str);
             plugin_safecall(ptr->L, 1, 0);
         }

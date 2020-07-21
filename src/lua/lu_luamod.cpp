@@ -8,4 +8,13 @@ void lu_luamod::init_api(lua_State *L)
 
     lua_pushfstring(L, MOD_PATH);
     lua_setglobal(L, "MOD_PATH");
+
+    lua_pushlightuserdata(L, gpMetaGlobals);
+    lua_setglobal(L, "METAMOD_GLOBALS");
+
+    lua_pushlightuserdata(L, gpGlobals);
+    lua_setglobal(L, "GAME_GLOBALS");
+
+    lua_pushlightuserdata(L, &g_engfuncs);
+    lua_setglobal(L, "ENGINE_FUNCTIONS");
 }
