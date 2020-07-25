@@ -37,7 +37,7 @@ edict_t *luaL_checkedict(lua_State *L, int index, bool can_nullptr)
     if(can_nullptr && lua_touserdata(L, index) == nullptr)
         return nullptr;
 
-    if(!lua_isuserdata(L, index))
+    if(!lua_islightuserdata(L, index))
     {
         luaL_argerror(L, index, "not a edict");
         return nullptr;
