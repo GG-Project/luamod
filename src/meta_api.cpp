@@ -16,7 +16,7 @@ plugin_info_t Plugin_info = {
     LUAMOD_VERSION, // version
     __DATE__, // date
     "Mr0maks", // author
-    "https://github.com/Mr0maks/luamod", // url
+    "https://github.com/GG-Project/luamod", // url
     "LM", // logtag
     PT_ANYTIME, // (when) loadable
     PT_NEVER, // (when) unloadable
