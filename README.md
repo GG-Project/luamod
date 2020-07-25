@@ -1,4 +1,3 @@
-# luamod
-LuaMod - plugin for launching lua plugins on a goldsource | xash3d server
+LuaMod - metamod addon for launching plugins writed on lua on a goldsource or xash3d server
 
-[Ledacy code for LuaMod](https://github.com/Mr0maks/ledacy_luamod)
+[LuaMod addon root dir](https://github.com/GG-Project/luamod_rootdir)
