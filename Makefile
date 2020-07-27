@@ -18,7 +18,7 @@ DLLNAME=luamod_mm
 
 LUAMOD_PATCH = dev
 
-LUAMOD_VERMAIN = 0.3.2
+LUAMOD_VERMAIN = 0.3.3
 
 CC?=gcc
 CXX?=g++

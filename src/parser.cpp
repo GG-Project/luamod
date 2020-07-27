@@ -4,16 +4,12 @@
 int HaveChar(const char *buff, int charater)
 {
     const char *result = strchr(buff, charater);
-    if (result != NULL)
-        return 1;
-    else
-        return 0;
+    return (result != NULL);
 }
 
 int HaveCommentary(const char *string)
 {
-    int result = HaveChar(string, ';');
-    return result;
+    return HaveChar(string, ';');
 }
 
 char *StripCommentary(char *dest, const char *src, size_t n)

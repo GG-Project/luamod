@@ -12,29 +12,13 @@
 #define PLUGINS_MAIN_LUA "%s/addons/luamod/plugins/%s/main.lua"
 #define PLUGINS_MAIN_LUAC "%s/addons/luamod/plugins/%s/main.luac"
 
-luamod_plugin_t *plugins_list;
-
-static void *plugins_lua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
-{
-    luamod_mem_debug *ptr2 = (luamod_mem_debug *)ud;
-
-    if (nsize == 0) {
-        ptr2->released += osize;
-        ptr2->used_now -= osize;
-        free(ptr);
-        return NULL;
-    } else {
-        ptr2->used_now = +(nsize - osize);
-        ptr2->total_size = +(nsize - osize);
-        return realloc(ptr, nsize);
-    }
-}
+luamod_plugin_t *plugins_list = nullptr;
 
 void loadLuaApi(lua_State *L);
 
 inline void push_plugin_to_list(luamod_plugin_t *plugin)
 {
-    plugin->next = plugins_list;
+    plugin->m_next = plugins_list;
     plugins_list = plugin;
 }
 
@@ -43,29 +27,27 @@ inline void remove_plugin_from_list( luamod_plugin_t *plugin )
     luamod_plugin_t *ptr = plugins_list, *ptr_t1 = nullptr;
     if(ptr->L == plugin->L)
     {
-        plugins_list = ptr->next;
+        plugins_list = ptr->m_next;
         return;
     }
     
-    ptr_t1 = ptr->next;
+    ptr_t1 = ptr->m_next;
     
     while(ptr_t1)
     {
 
         if( ptr_t1->L == plugin->L )
         {
-            ptr->next = ptr_t1->next;
+            ptr->m_next = ptr_t1->m_next;
             return;
         }
-
-	ptr = ptr_t1;
-        ptr_t1 = ptr_t1->next;
+        ptr = ptr_t1;
+        ptr_t1 = ptr_t1->m_next;
     }
 }
 
 luamod_plugin_t *find_plugin_by_luastate(lua_State *L)
 {
-
     luamod_plugin_t *ptr = plugins_list;
 
     while (ptr != NULL) {
@@ -73,7 +55,7 @@ luamod_plugin_t *find_plugin_by_luastate(lua_State *L)
         if (ptr->L == L)
             break;
 
-        ptr = ptr->next;
+        ptr = ptr->m_next;
     }
 
     return ptr;
@@ -135,7 +117,7 @@ void plugin_error(lua_State *L, const char *fmt, ...)
     luaL_error(plugin->L, "%s", string);
 }
 
-void plugin_safecall(lua_State *L, int nargs, int rets)
+void plugin_pcall(lua_State *L, int nargs, int rets)
 {
     // TODO: сделать stack traceback вместо 0
     if (lua_pcall(L, nargs, rets, 0)) {
@@ -149,12 +131,12 @@ void Plugin_List()
 {
     luamod_plugin_t *ptr = plugins_list;
 
-    while (ptr != NULL) {
+    while (ptr != nullptr) {
         ALERT(at_console, "[LM] Plugin %s %s %s %s\n", ptr->author, ptr->name, ptr->version, ptr->description);
-        ptr = ptr->next;
+        ptr = ptr->m_next;
     }
 
-    ptr = NULL;
+    ptr = nullptr;
 }
 
 int plugin_panic_catch_exceptions(lua_State *L)
@@ -187,7 +169,7 @@ luamod_plugin_t *find_plugin_by_name(const char *filename)
 	return ptr;
 	}
 
-	ptr = ptr->next;
+    ptr = ptr->m_next;
     }
   return NULL;
 }
@@ -206,7 +188,7 @@ void Plugin_Load(const char *filename)
 
     strncpy(ptr->filename, filename, sizeof(ptr->filename));
 
-    ptr->L = lua_newstate(plugins_lua_alloc, &ptr->debug_mem);
+    ptr->L = luaL_newstate();
 
     lua_pushlightuserdata(ptr->L, (void *)plugin_wrap_exceptions);
     luaJIT_setmode(ptr->L, -1, LUAJIT_MODE_WRAPCFUNC|LUAJIT_MODE_ON);

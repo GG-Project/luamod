@@ -42,9 +42,9 @@ cvar_t *Cvar_Manager_Register(const char *cvar_name, float value, const char *st
 
     if (!string) {
         ptr->cvar.value = value;
-        ptr->cvar.string = "";
+        ptr->cvar.string = NULL;
     } else {
-        ptr->cvar.string = string;
+        ptr->cvar.string = strdup(string);
     }
 
     ptr->cvar.name = cvar_name;

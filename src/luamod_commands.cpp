@@ -13,12 +13,10 @@ void cmd_luamod_usage(void)
   PRINT_CONSOLE("   version          - display luamod version info\n");
   PRINT_CONSOLE("   list             - list plugins currently loaded\n");
   PRINT_CONSOLE("   cvars            - list cvars currently registred by luamod or plugins\n");
-  // PRINT_CONSOLE("   modules          - list modules \n");
   // PRINT_CONSOLE("   sqlite3          - sqlite memory info\n");
   PRINT_CONSOLE("   load <name>      - load a plugin with the given name\n");
   PRINT_CONSOLE("   unload <name>    - unload a plugin with the given name\n");
   PRINT_CONSOLE("   restart <name>   - restart a plugin with the given name\n");
-  // PRINT_CONSOLE("   run <script>     - run lua script\n");
 }
 
 void cmd_luamod_version()
@@ -49,13 +47,6 @@ void cmd_luamod_pluginlist() { Plugin_List(); }
 void Cvar_Manager_List();
 
 void cmd_luamod_cvarlist() { Cvar_Manager_List(); }
-
-//#include "modules.h"
-
-void cmd_luamod_modules()
-{
-    // List_Modules();
-}
 
 void cmd_luamod_sqlite3()
 {
@@ -125,8 +116,6 @@ void cmd_luamod_restart()
 
 void cmd_luamod_runlua() {}
 
-
-
 void LuaMod_COMMAND(void)
 {
     const char *cmd;
@@ -139,8 +128,6 @@ void LuaMod_COMMAND(void)
         cmd_luamod_pluginlist();
     else if(!strcasecmp(cmd, "cvars"))
       cmd_luamod_cvarlist();
-    //  else if (!strcasecmp(cmd, "modules"))
-    //    cmd_luamod_modules();
     //else if (!strcasecmp(cmd, "sqlite3"))
         //cmd_luamod_sqlite3();
     else if (!strcasecmp(cmd, "load"))
@@ -149,8 +136,6 @@ void LuaMod_COMMAND(void)
         cmd_luamod_unload();
     else if (!strcasecmp(cmd, "restart"))
         cmd_luamod_restart();
-    else if (!strcasecmp(cmd, "run"))
-        cmd_luamod_runlua();
     else {
         PRINT_CONSOLE("Unrecognized luamod command: %s\n", cmd);
         cmd_luamod_usage();

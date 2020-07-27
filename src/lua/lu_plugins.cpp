@@ -9,7 +9,6 @@
 void lu_plugin_api::init(lua_State *L)
 {
     lua_register(L, "register_plugin", l_register_plugin);
-    lua_register(L, "include", l_include);
 }
 
 int lu_plugin_api::l_register_plugin(lua_State *L)
@@ -37,18 +36,6 @@ int lu_plugin_api::l_register_plugin(lua_State *L)
     strncpy(plugin_ptr->description, description, sizeof(plugin_ptr->description));
 
     plugin_ptr->registred = true;
-
-    return 0;
-}
-
-#define INCLUDE_PATH "%s/addons/luamod/includes/%s"
-
-int lu_plugin_api::l_include(lua_State *L)
-{
-    const char *filename = luaL_checkstring(L, 1);
-    if (luaL_dofile(L, va(INCLUDE_PATH, MOD_PATH, filename))) {
-        luaL_error(L, "Error while loading include %s.lua : %s\n", lua_tostring(L, -1));
-    }
 
     return 0;
 }

@@ -1,18 +1,5 @@
 #include "luai.h"
 #include <extdll.h>
-#include <meta_api.h>
-#include "luamod.h"
-
-typedef enum {
-    UNKNOWN,
-    EDICT,
-} luamod_types;
-
-struct luamod_type
-{
-    luamod_types type;
-    void *pointer;
-};
 
 void luaL_push_vec3_t(lua_State *L, float *vector)
 {
@@ -31,7 +18,7 @@ void lua_pushedict(lua_State *L, edict_t *ed)
     lua_pushlightuserdata(L, ed);
 }
 
-edict_t *luaL_checkedict(lua_State *L, int index, bool can_nullptr)
+edict_t *lua_checkedict(lua_State *L, int index, bool can_nullptr)
 {
     // maybe function can pass nullptr in edict ?
     if(can_nullptr && lua_touserdata(L, index) == nullptr)

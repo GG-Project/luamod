@@ -154,7 +154,7 @@ int lu_engfuncs::l_pfnServerExecute(lua_State *L)
 
 int lu_engfuncs::l_pfnClientCommand(lua_State *L)
 {
-    CLIENT_COMMAND(luaL_checkedict(L, 1, 0), "%s\n", luaL_checkstring(L, 2));
+    CLIENT_COMMAND(lua_checkedict(L, 1, 0), "%s\n", luaL_checkstring(L, 2));
     return 0;
 }
 
@@ -174,7 +174,7 @@ int lu_engfuncs::l_pfnMessageBegin(lua_State *L)
         luaL_checkinteger(L, 2), // TYPE
 //        luaL_check_vec3_t(L, 3),
 	origin.data(),
-        luaL_checkedict(L, 4, 1) // PLAYER
+        lua_checkedict(L, 4, 1) // PLAYER
     );
 
     return 0;
@@ -236,7 +236,7 @@ int lu_engfuncs::l_pfnWriteEntity(lua_State *L)
 
 int lu_engfuncs::l_pfnGetInfoKeyBuffer(lua_State *L)
 {
-    lua_pushlightuserdata(L, GET_INFOKEYBUFFER(luaL_checkedict(L, 1, 0)));
+    lua_pushlightuserdata(L, GET_INFOKEYBUFFER(lua_checkedict(L, 1, 0)));
     return 1;
 }
 
@@ -260,7 +260,7 @@ int lu_engfuncs::l_pfnSetClientKeyValue(lua_State *L)
 
 int lu_engfuncs::l_pfnGetPlayerUserId(lua_State *L)
 {
-    lua_pushinteger(L, GETPLAYERUSERID(luaL_checkedict(L, 1, 0)));
+    lua_pushinteger(L, GETPLAYERUSERID(lua_checkedict(L, 1, 0)));
     return 1;
 }
 
@@ -279,7 +279,7 @@ struct l_pfnGetPlayerStats_struct
 int lu_engfuncs::l_pfnGetPlayerStats(lua_State *L)
 {
     struct l_pfnGetPlayerStats_struct *pointer = (struct l_pfnGetPlayerStats_struct*)malloc(sizeof(struct l_pfnGetPlayerStats_struct));
-    g_engfuncs.pfnGetPlayerStats(luaL_checkedict(L, 1, 0), &pointer->ping, &pointer->packet_lost);
+    g_engfuncs.pfnGetPlayerStats(lua_checkedict(L, 1, 0), &pointer->ping, &pointer->packet_lost);
 
     lua_newtable(L);
     lua_pushnumber(L, pointer->ping);
@@ -293,7 +293,7 @@ int lu_engfuncs::l_pfnGetPlayerStats(lua_State *L)
 
 int lu_engfuncs::l_pfnGetPlayerAuthId(lua_State *L)
 {
-    lua_pushstring(L, GETPLAYERAUTHID(luaL_checkedict(L, 1, 0)));
+    lua_pushstring(L, GETPLAYERAUTHID(lua_checkedict(L, 1, 0)));
     return 1;
 }
 
@@ -337,7 +337,7 @@ int lu_engfuncs::l_pfnCVarSetString(lua_State *L)
 
 int lu_engfuncs::l_pfnIndexOfEdict(lua_State *L)
 {
-  lua_pushinteger(L, g_engfuncs.pfnIndexOfEdict(luaL_checkedict(L, 1, 1)));
+  lua_pushinteger(L, g_engfuncs.pfnIndexOfEdict(lua_checkedict(L, 1, 1)));
   return 1;
 }
 
@@ -352,12 +352,12 @@ int lu_engfuncs::l_pfnClientPrintf(lua_State *L)
     int print_type = (int)luaL_checkinteger(L, 2);
     if (print_type < 0 || print_type > 3)
         luaL_error(L, "client_printf: print type %i invalid!!!", print_type);
-    CLIENT_PRINTF(luaL_checkedict(L, 1, 0), (PRINT_TYPE)print_type, luaL_checkstring(L, 3));
+    CLIENT_PRINTF(lua_checkedict(L, 1, 0), (PRINT_TYPE)print_type, luaL_checkstring(L, 3));
     return 0;
 }
 
 int lu_engfuncs::l_pfnQueryClientCvarValue2(lua_State *L)
 {
-    QUERY_CLIENT_CVAR_VALUE2(luaL_checkedict(L, 1, 0), luaL_checkstring(L, 2), (int)luaL_checkinteger(L, 3));
+    QUERY_CLIENT_CVAR_VALUE2(lua_checkedict(L, 1, 0), luaL_checkstring(L, 2), (int)luaL_checkinteger(L, 3));
     return 0;
 }

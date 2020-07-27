@@ -1,4 +1,4 @@
-#include "commands_luamod.h"
+#include "luamod_commands.h"
 #include "luai.h"
 #include "luamod.h"
 #include "utils.h"
