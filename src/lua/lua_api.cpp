@@ -6,7 +6,6 @@
 #include "lu_luamod.h"
 #include "lu_output.h"
 #include "lu_plugins.h"
-//#include "lu_sqlite.h"
 #include "lu_utils.h"
 
 void loadLuaApi(lua_State *L)
@@ -20,5 +19,4 @@ void loadLuaApi(lua_State *L)
     lm_utils::init_api(L);
     lu_output::init_api(L);
     lu_engfuncs::init_api(L);
-    //lu_sqlite::init_api(L);
 }
