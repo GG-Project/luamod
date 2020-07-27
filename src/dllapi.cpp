@@ -28,7 +28,7 @@ DLL_FUNCTIONS g_DllFunctionTable = {
     NULL, // pfnServerDeactivate
     pfnPlayerPreThink, // pfnPlayerPreThink
     pfnPlayerPostThink, // pfnPlayerPostThink
-    NULL, // pfnStartFrame
+    pfnStartFrame, // pfnStartFrame
     NULL, // pfnParmsNewLevel
     NULL, // pfnParmsChangeLevel
     NULL, // pfnGetGameDescription
