@@ -8,19 +8,12 @@ os:
 
 compiler:
     - gcc
-    - clang
 
 env:
     - DEBUG=1 XASH3D=1
     - DEBUG=0 XASH3D=1
     - DEBUG=1 XASH3D=0
     - DEBUG=0 XASH3D=0
-
-matrix:
-    include:
-      - os: linux
-      compiler: clang
-      env: CC=clang CXX=clang++
 
 script:
     - make
