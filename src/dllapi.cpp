@@ -29,8 +29,8 @@ DLL_FUNCTIONS g_DllFunctionTable = {
     pfnPlayerPreThink, // pfnPlayerPreThink
     pfnPlayerPostThink, // pfnPlayerPostThink
     pfnStartFrame, // pfnStartFrame
-    NULL, // pfnParmsNewLevel
-    NULL, // pfnParmsChangeLevel
+    pfnParmsNewLevel, // pfnParmsNewLevel
+    pfnParmsChangeLevel, // pfnParmsChangeLevel
     NULL, // pfnGetGameDescription
     NULL, // pfnPlayerCustomization
     NULL, // pfnSpectatorConnect

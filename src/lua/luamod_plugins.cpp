@@ -1,7 +1,7 @@
 #include <extdll.h>
 #include <meta_api.h>
 
-#include "lu_plugins.h"
+#include "luamod_plugins.h"
 #include "lua_plugins.h"
 
 #include "utils.h"

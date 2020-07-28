@@ -1,4 +1,4 @@
-#include "lu_engfuncs.hpp"
+#include "luamod_engfuncs.h"
 #include <extdll.h>
 #include <meta_api.h>
 #include <utils.h>
@@ -236,7 +236,7 @@ int lu_engfuncs::l_pfnWriteEntity(lua_State *L)
 
 int lu_engfuncs::l_pfnGetInfoKeyBuffer(lua_State *L)
 {
-    lua_pushlightuserdata(L, GET_INFOKEYBUFFER(lua_checkedict(L, 1, 0)));
+    lua_pushlightuserdata(L, GET_INFOKEYBUFFER(lua_checkedict(L, 1, 1)));
     return 1;
 }
 
@@ -275,7 +275,6 @@ struct l_pfnGetPlayerStats_struct
     int packet_lost;
 };
 
-//its thread safe ?
 int lu_engfuncs::l_pfnGetPlayerStats(lua_State *L)
 {
     struct l_pfnGetPlayerStats_struct *pointer = (struct l_pfnGetPlayerStats_struct*)malloc(sizeof(struct l_pfnGetPlayerStats_struct));

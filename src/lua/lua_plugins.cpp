@@ -96,11 +96,15 @@ int plugin_have_event(lua_State *L, const char *event)
     lua_getfield(L, -1, event);
 
     if(lua_isfunction(L, -1))
+    {
+        lua_remove(L, -2); // remove engine_events table
         return 1;
-    else {
-        lua_pop(L, -1);
-        return 0;
+    } else
+    {
+        lua_pop(L, -2); // Drop engine_events and not function
     }
+
+    return 0;
 }
 
 void plugin_error(lua_State *L, const char *fmt, ...)
@@ -119,7 +123,7 @@ void plugin_error(lua_State *L, const char *fmt, ...)
 
 void plugin_pcall(lua_State *L, int nargs, int rets)
 {
-    // TODO: сделать stack traceback вместо 0
+    // TODO: make stack traceback
     if (lua_pcall(L, nargs, rets, 0)) {
         luamod_plugin_t *plugin = find_plugin_by_luastate(L);
         plugin->running = false;
@@ -262,7 +266,7 @@ void Load_Plugins_From_Config(void)
     while (!ferror(config) && fgets(buff, sizeof(buff), config) != NULL) {
         StripCommentary(buff2, buff, sizeof(buff2));
 
-        if (buff2[0] == 0)
+        if (buff2[0] == '\0')
             continue;
 
         Plugin_Load(buff2);

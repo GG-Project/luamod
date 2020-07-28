@@ -1,4 +1,4 @@
-#include "lu_luamod.h"
+#include "luamod_global.h"
 #include "build.h"
 
 void lu_luamod::init_api(lua_State *L)

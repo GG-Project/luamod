@@ -2,11 +2,11 @@
 #include <extdll.h>
 #include <meta_api.h>
 
-#include "lu_engfuncs.hpp"
-#include "lu_luamod.h"
-#include "lu_output.h"
-#include "lu_plugins.h"
-#include "lu_utils.h"
+#include "luamod_engfuncs.h"
+#include "luamod_global.h"
+#include "luamod_print.h"
+#include "luamod_plugins.h"
+#include "luamod_utils.h"
 
 void loadLuaApi(lua_State *L)
 {

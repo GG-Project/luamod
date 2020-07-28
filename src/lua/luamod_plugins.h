@@ -1,3 +1,4 @@
+#pragma once
 #include "luai.h"
 
 namespace lu_plugin_api {
