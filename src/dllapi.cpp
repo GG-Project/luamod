@@ -5,11 +5,11 @@
 DLL_FUNCTIONS g_DllFunctionTable = {
     GameDLLInit, // pfnGameInit
     pfnSpawn, // pfnSpawn
-    NULL, // pfnThink
-    NULL, // pfnUse
-    NULL, // pfnTouch
-    NULL, // pfnBlocked
-    NULL, // pfnKeyValue
+    pfnThink, // pfnThink
+    pfnUse, // pfnUse
+    pfnTouch, // pfnTouch
+    pfnBlocked, // pfnBlocked
+    pfnKeyValue, // pfnKeyValue
     NULL, // pfnSave
     NULL, // pfnRestore
     NULL, // pfnSetAbsBox

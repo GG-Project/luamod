@@ -21,7 +21,7 @@ C_DLLEXPORT void WINAPI GiveFnptrsToDll(enginefuncs_t *pengfuncsFromEngine, glob
     memcpy(&g_engfuncs, pengfuncsFromEngine, sizeof(enginefuncs_t));
     gpGlobals = pGlobals;
 
-    ALERT(at_console, "[LM] LuaMod version %s\n", LUAMOD_VERSION);
+    ALERT(at_console, "[LM] LuaMod version " LUAMOD_VERSION "\n");
 
     (*g_engfuncs.pfnAddServerCommand)("luamod", LuaMod_COMMAND);
 

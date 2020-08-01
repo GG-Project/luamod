@@ -16,28 +16,21 @@ DLL_SRCDIR=src
 
 DLLNAME=luamod_mm
 
-LUAMOD_PATCH = dev
+LUAMOD_VERMAIN = 0.3.5
+LUAMOD_BRANCH = dev
+LUAMOD_GIT_COMMIT := $(firstword $(shell git rev-parse --short=6 HEAD) unknown)
 
-LUAMOD_VERMAIN = 0.3.4
-
-CC?=gcc
-CXX?=g++
-
-ifeq ($(CLANG), 1)
-CC=clang
-CXX=clang++
-endif
+CC?=cc
+CXX?=c++
 
 COMPILER_VER_CC = $(shell $(CC) -dumpversion)
 COMPILER_VER_CXX = $(shell $(CC) -dumpversion)
 
 OPT_CFLAGS = -O2 -flto -fno-stack-protector -fPIC -Wall
 
-BASE_CFLAGS = -D__USE_GNU -std=gnu++11 -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\" -DLUAMOD_PATCH=\"$(LUAMOD_PATCH)\"
+BASE_CFLAGS = -D__USE_GNU -std=gnu++11 -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\" -DLUAMOD_BRANCH=\"$(LUAMOD_BRANCH)\"
 
 ARCH=$(shell uname -m)
-
-LUAMOD_COMMIT := $(firstword $(shell git rev-parse --short=6 HEAD) unknown)
 
 ifeq ($(ARCH), x86_64)
 ARCH = i686
@@ -61,7 +54,7 @@ BUILD_TYPE = release
 BUILD_TYPE_CFLAGS = -DNDEBUG
 endif
 
-LUAMOD_VERSION := $(LUAMOD_VERMAIN)-$(BUILD_TYPE)-$(LUAMOD_COMMIT)
+LUAMOD_VERSION := $(LUAMOD_VERMAIN)-$(BUILD_TYPE)-$(LUAMOD_GIT_COMMIT)
 DLL_OBJDIR=$(BUILD_TYPE).$(OS).$(ARCH)
 
 ifeq ($(XASH3D), 1)
@@ -71,7 +64,7 @@ endif
 
 ifeq ($(REHLDS_SUPPORT),1)
 ifeq ($(XASH3D), 1)
-$(error "REHLDS not work with XASH3D headers!!!!")
+$(error "XASH3D does support REHLDS api")
 else
 BUILD_TYPE_CFLAGS += -DREHLDS_SUPPORT
 endif
@@ -83,17 +76,14 @@ INCLUDE=-I. -I$(DLL_SRCDIR) -I$(HLSDK)/common -I$(HLSDK)/dlls -I$(HLSDK)/engine 
                 -I$(HLSDK)/game_shared -I$(HLSDK)/pm_shared -I$(HLSDK)/public -I$(METAMOD) -I$(LUAMOD_API) -I$(LUA)
 
 LDFLAGS=-L $(LUA) -lluajit -shared -lpthread
-#LDFLAGS=-L $(LUA) -lluajit -shared -lsqlite3 -lpthread
 
 DO_CC=$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
-
 DO_CXX=$(CXX) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
 $(DLL_OBJDIR)/%.o: $(DLL_SRCDIR)/%.cpp
 	$(DO_CXX)
 
 SRC = $(wildcard src/*.cpp) $(wildcard src/lua/*.cpp)
-
 OBJ := $(SRC:$(DLL_SRCDIR)/%.cpp=$(DLL_OBJDIR)/%.o)
 
 $(DLLNAME)_$(ARCH).$(SHLIBEXT) : lua neat depend $(OBJ)
@@ -110,7 +100,9 @@ clean: depend
 	-rm -f $(DLL_OBJDIR)/$(DLLNAME)_$(ARCH).$(SHLIBEXT)
 	-rm -f $(DLL_OBJDIR)/Rules.depend
 
-lua:
+lua: luajit/src/libluajit.a
+
+luajit/src/libluajit.a: luajit/src/*.h
 	cd $(LUA) && $(MAKE) BUILDMODE=static CFLAGS=$(LUA_FLAGS) LDFLAGS=$(LUA_FLAGS)
 
 depend: $(DLL_OBJDIR)/Rules.depend
