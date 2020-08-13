@@ -27,4 +27,4 @@ typedef luamod_plugin_s luamod_plugin_t;
 
 luamod_plugin_t *find_plugin_by_luastate(lua_State *L);
 void plugin_pcall(lua_State *L, int nargs, int rets);
-int plugin_have_event(lua_State *L, const char *event);
+bool plugin_have_event(lua_State *L, const char *event);

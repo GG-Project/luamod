@@ -1,7 +1,7 @@
 #include "luai.h"
 #include <extdll.h>
 
-void luaL_push_vec3_t(lua_State *L, float *vector)
+void lua_pushvec3_t(lua_State *L, float *vector)
 {
     lua_newtable(L);
     lua_pushnumber(L, 1);
@@ -18,7 +18,7 @@ void lua_pushedict(lua_State *L, edict_t *ed)
     lua_pushlightuserdata(L, ed);
 }
 
-edict_t *lua_checkedict(lua_State *L, int index, bool can_nullptr)
+edict_t *luaL_checkedict(lua_State *L, int index, bool can_nullptr)
 {
     // maybe function can pass nullptr in edict ?
     if(can_nullptr && lua_touserdata(L, index) == nullptr)

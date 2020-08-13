@@ -1,14 +1,8 @@
 #include <string.h>
 
-int HaveChar(const char *buff, int charater)
-{
-    const char *result = strchr(buff, charater);
-    return (result != NULL);
-}
-
 int HaveCommentary(const char *string)
 {
-    return HaveChar(string, ';');
+    return (strchr(string, ';') != NULL);
 }
 
 char *StripCommentary(char *dest, const char *src, size_t n)
@@ -17,7 +11,7 @@ char *StripCommentary(char *dest, const char *src, size_t n)
 
     for (i = 0; i <= n && src[i] != ';' && src[i] != '\0' && src[i] != ' ' && src[i] != '\n'; i++)
         dest[i] = src[i];
-    dest[i] = '\0';
 
+    dest[i] = '\0';
     return dest;
 }

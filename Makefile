@@ -16,7 +16,7 @@ DLL_SRCDIR=src
 
 DLLNAME=luamod_mm
 
-LUAMOD_VERMAIN = 0.3.5
+LUAMOD_VERMAIN = 0.3.6
 LUAMOD_BRANCH = dev
 LUAMOD_GIT_COMMIT := $(firstword $(shell git rev-parse --short=6 HEAD) unknown)
 

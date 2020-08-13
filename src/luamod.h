@@ -2,8 +2,6 @@
 
 #include "luai.h"
 
-#include <extdll.h> //мб будет полезно
-#include <pthread.h>
-#include <signal.h>
+#include <extdll.h>
 
 extern char MOD_PATH[64];

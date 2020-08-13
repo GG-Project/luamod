@@ -10,6 +10,6 @@ void lm_utils::init_api(lua_State *L)
 int lm_utils::l_get_entity_key_value(lua_State *L)
 {
     // g_engfuncs.pfnGetInfoKeyBuffer((edict_t *)lua_touserdata(L, 1)));
-    lua_pushstring(L, ENTITY_KEYVALUE(lua_checkedict(L, 1, 0), (char *)luaL_checkstring(L, 2)));
+    lua_pushstring(L, ENTITY_KEYVALUE(luaL_checkedict(L, 1, 0), (char *)luaL_checkstring(L, 2)));
     return 1;
 }

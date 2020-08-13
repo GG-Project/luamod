@@ -8,7 +8,7 @@
 #include "luamod_plugins.h"
 #include "luamod_utils.h"
 
-void loadLuaApi(lua_State *L)
+void load_lua_api(lua_State *L)
 {
     lua_createtable(L, 0, 1);
     lua_setglobal(L, "engine_events");

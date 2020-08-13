@@ -10,11 +10,10 @@
 
 #define PLUGINS_CONFIG_PATH "%s/addons/luamod/plugins.ini"
 #define PLUGINS_MAIN_LUA "%s/addons/luamod/plugins/%s/main.lua"
-#define PLUGINS_MAIN_LUAC "%s/addons/luamod/plugins/%s/main.luac"
 
 luamod_plugin_t *plugins_list = nullptr;
 
-void loadLuaApi(lua_State *L);
+void load_lua_api(lua_State *L);
 
 inline void push_plugin_to_list(luamod_plugin_t *plugin)
 {
@@ -61,36 +60,12 @@ luamod_plugin_t *find_plugin_by_luastate(lua_State *L)
     return ptr;
 }
 
-int errorHandler(lua_State *L)
-{
-    // stack: err
-    const char *err = lua_tostring(L, 1);
-
-    ALERT(at_console, "Error: %s\n", err);
-
-    lua_getglobal(L, "debug"); // stack: err debug
-    lua_getfield(L, -1, "traceback"); // stack: err debug debug.traceback
-
-    // debug.traceback() возвращает 1 значение
-    if (lua_pcall(L, 0, 1, 0)) {
-        const char *err = lua_tostring(L, -1);
-
-        ALERT(at_console, "Error in debug.traceback() call: %s\n", err);
-    } else {
-        const char *stackTrace = lua_tostring(L, -1);
-
-        ALERT(at_console, "C++ stack traceback: %s\n", stackTrace);
-    }
-
-    return 1;
-}
-
 void plugin_stop(luamod_plugin_t *plugin)
 {
     //  plugin->running = false;
 }
 
-int plugin_have_event(lua_State *L, const char *event)
+bool plugin_have_event(lua_State *L, const char *event)
 {
     lua_getglobal(L, "engine_events");
     lua_getfield(L, -1, event);
@@ -200,7 +175,7 @@ void Plugin_Load(const char *filename)
 
     lua_atpanic(ptr->L, plugin_panic_catch_exceptions);
 
-    loadLuaApi(ptr->L);
+    load_lua_api(ptr->L);
 
     push_plugin_to_list(ptr);
 

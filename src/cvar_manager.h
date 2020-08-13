@@ -1,8 +1,5 @@
-#ifndef CVAR_MANAGER_H
-#define CVAR_MANAGER_H
+#pragma once
 
 #include <extdll.h>
 
-cvar_t *Cvar_Manager_Register(const char *cvar_name, float value, const char *string);
-
-#endif // CVAR_MANAGER_H
+void Cvar_Manager_Register(const char *cvar_name, float value, const char *string);

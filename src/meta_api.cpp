@@ -8,7 +8,7 @@ gamedll_funcs_t *gpGamedllFuncs;
 mutil_funcs_t *gpMetaUtilFuncs;
 enginefuncs_t *g_pengfuncsTable;
 
-bool g_meta_init = FALSE;
+bool g_meta_init = false;
 
 plugin_info_t Plugin_info = {
     META_INTERFACE_VERSION, // ifvers
@@ -22,7 +22,7 @@ plugin_info_t Plugin_info = {
     PT_NEVER, // (when) unloadable
 };
 
-void Meta_Init(void) { g_meta_init = TRUE; }
+void Meta_Init(void) { g_meta_init = true; }
 
 C_DLLEXPORT int Meta_Query(char *interfaceVersion, plugin_info_t **plinfo, mutil_funcs_t *pMetaUtilFuncs)
 {

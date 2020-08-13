@@ -6,20 +6,15 @@ void lu_luamod::init_api(lua_State *L)
     lua_pushstring(L, LM_buildversion());
     lua_setglobal(L, "LUAMOD_VERSION");
 
-    lua_pushfstring(L, MOD_PATH);
+    lua_pushstring(L, MOD_PATH);
     lua_setglobal(L, "MOD_PATH");
 
-#if defined(XASH3D)
-    lua_pushboolean(L, false);
-    lua_setglobal(L, "ENGINE_GOLDSOURCE");
-    lua_pushboolean(L, true);
-    lua_setglobal(L, "ENGINE_XASH3D");
+#if !defined(XASH3D)
+    lua_pushstring(L, "goldsrc");
 #else
-    lua_pushboolean(L, true);
-    lua_setglobal(L, "ENGINE_GOLDSOURCE");
-    lua_pushboolean(L, false);
-    lua_setglobal(L, "ENGINE_XASH3D");
+    lua_pushstring(L, "xash3d");
 #endif
+    lua_setglobal(L, "ENGINE");
 
     lua_pushlightuserdata(L, gpMetaGlobals);
     lua_setglobal(L, "METAMOD_GLOBALS");

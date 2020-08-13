@@ -1,5 +1,4 @@
 #include "build.h"
-
 #include "luai.h"
 
 const char *LM_buildarch(void)
@@ -58,8 +57,6 @@ const char *LM_buildversion(void)
     const char *version = LUAMOD_VERSION;
     return version;
 }
-
-#include <lua.hpp>
 
 const char *LM_buildlua(void)
 {
