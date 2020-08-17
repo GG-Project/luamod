@@ -5,6 +5,15 @@
 
 extern luamod_plugin_t *plugins_list;
 
+#undef RETURN_META
+#undef RETURN_META_VALUE
+
+#define RETURN_META(x) \
+    do { if(gpMetaGlobals->mres != MRES_SUPERCEDE && gpMetaGlobals->mres != MRES_OVERRIDE) { gpMetaGlobals->mres = x; } return; } while(0)
+
+#define RETURN_META_VALUE(x, x2) \
+    do { if(gpMetaGlobals->mres != MRES_SUPERCEDE && gpMetaGlobals->mres != MRES_OVERRIDE) { gpMetaGlobals->mres = x; } return x2; } while(0)
+
 void GameDLLInit(void)
 {
     RETURN_META(MRES_HANDLED);
