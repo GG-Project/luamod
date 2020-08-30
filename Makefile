@@ -18,8 +18,8 @@ LUAMOD_VERMAIN = 0.3.6
 LUAMOD_BRANCH = dev
 LUAMOD_GIT_COMMIT := $(firstword $(shell git rev-parse --short=6 HEAD) unknown)
 
-CC?=cc
-CXX?=c++
+CC?=gcc
+CXX?=g++
 # Lto enabled by default for luamod dll and luajit
 LTO?=1
 
@@ -27,32 +27,33 @@ ARCH=$(shell uname -m)
 COMPILER_VER_CC = $(shell $(CC) -dumpversion)
 COMPILER_VER_CXX = $(shell $(CXX) -dumpversion)
 
+ifeq (, $(findstring "g++", $(shell $(CXX) --version)))
+# Disable lto if g++ 4.* and 5.*
+GCC_DISABLE_LTO := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 505000)
+ifeq "$(GCC_DISABLE_LTO)" "1"
+LTO = 0
+endif
+endif
+
 OPT_CFLAGS = -O2 -fno-stack-protector
 BASE_CFLAGS = -D__USE_GNU -std=gnu++11 -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\" -DLUAMOD_BRANCH=\"$(LUAMOD_BRANCH)\" -fPIC -Wall
 
-# mini hacks for gcc 5.4.*
-ifeq (, $(findstring "5.4.", $(COMPILER_VER_CXX)))
-LUA_AR = gcc-ar
-else
-LUA_AR = ar
-endif
-
 ifeq ($(LTO), 1)
 CFLAGS += -flto
-LUA_CFLAGS += -flto
 LDFLAGS += -flto
+LUA_CFLAGS += -flto
 LUA_LDFLAGS += -flto
 endif
 
 ifeq ($(ARCH), x86_64)
 ARCH = i686
-ARCH_CFLAGS += -m32 -march=i686 -mtune=generic -msse2
+ARCH_CFLAGS += -march=i686 -msse -msse2 -mfpmath=sse
 LUA_CFLAGS += -m32
 LUA_LDFLAGS += -m32
 else ifeq ($(ARCH), aarch64)
 ARCH_CFLAGS += -march=native
 XASH3D = 1
-else ifeq (, $(findstring arm,$(ARCH_UNAME)))
+else ifeq ( , $(findstring arm,$(ARCH_UNAME)) )
 ARCH_CFLAGS += -march=native
 XASH3D = 1
 endif
@@ -115,7 +116,7 @@ clean: depend
 lua: $(LUA)/libluajit.a
 
 $(LUA)/libluajit.a: $(LUA)/*.h
-	cd $(LUA) && $(MAKE) BUILDMODE=static CFLAGS="$(LUA_CFLAGS)" LDFLAGS="$(LUA_LDFLAGS)" AR="$(LUA_AR)"
+	cd $(LUA) && $(MAKE) BUILDMODE=static CFLAGS="$(LUA_CFLAGS)" LDFLAGS="$(LUA_LDFLAGS)"
 
 depend: $(DLL_OBJDIR)/Rules.depend
 

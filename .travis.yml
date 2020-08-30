@@ -14,10 +14,11 @@ env:
     - DEBUG=0 XASH3D=1 LTO=0
     - DEBUG=1 XASH3D=0 LTO=0
     - DEBUG=0 XASH3D=0 LTO=0
-    - DEBUG=1 XASH3D=1 LTO=1
-    - DEBUG=0 XASH3D=1 LTO=1
-    - DEBUG=1 XASH3D=0 LTO=1
-    - DEBUG=0 XASH3D=0 LTO=1
+# LTO won't work on gcc 4.* and gcc 5.*
+#    - DEBUG=1 XASH3D=1 LTO=1
+#    - DEBUG=0 XASH3D=1 LTO=1
+#    - DEBUG=1 XASH3D=0 LTO=1
+#    - DEBUG=0 XASH3D=0 LTO=1
 
 install:
   - sudo apt-get install -y gcc-multilib
