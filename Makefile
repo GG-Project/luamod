@@ -20,7 +20,7 @@ LUAMOD_GIT_COMMIT := $(firstword $(shell git rev-parse --short=6 HEAD) unknown)
 
 CC?=cc
 CXX?=c++
-# Lto enbled by default for luamod dll and luajit
+# Lto enabled by default for luamod dll and luajit
 LTO?=1
 
 ARCH=$(shell uname -m)
@@ -29,6 +29,13 @@ COMPILER_VER_CXX = $(shell $(CXX) -dumpversion)
 
 OPT_CFLAGS = -O2 -fno-stack-protector
 BASE_CFLAGS = -D__USE_GNU -std=gnu++11 -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\" -DLUAMOD_BRANCH=\"$(LUAMOD_BRANCH)\" -fPIC -Wall
+
+# mini hacks for gcc 5.4.*
+ifeq (, $(findstring "5.4.", $(COMPILER_VER_CXX)))
+LUA_AR = gcc-ar
+else
+LUA_AR = ar
+endif
 
 ifeq ($(LTO), 1)
 CFLAGS += -flto
@@ -103,11 +110,12 @@ clean: depend
 	-rm -f $(OBJ)
 	-rm -f $(DLL_OBJDIR)/$(DLLNAME)_$(ARCH).$(SHLIBEXT)
 	-rm -f $(DLL_OBJDIR)/Rules.depend
+	cd $(LUA) && $(MAKE) BUILDMODE=static clean
 
 lua: $(LUA)/libluajit.a
 
 $(LUA)/libluajit.a: $(LUA)/*.h
-	cd $(LUA) && $(MAKE) BUILDMODE=static CFLAGS="$(LUA_CFLAGS)" LDFLAGS="$(LUA_LDFLAGS)"
+	cd $(LUA) && $(MAKE) BUILDMODE=static CFLAGS="$(LUA_CFLAGS)" LDFLAGS="$(LUA_LDFLAGS)" AR="$(LUA_AR)"
 
 depend: $(DLL_OBJDIR)/Rules.depend
 
