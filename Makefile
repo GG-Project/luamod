@@ -1,7 +1,6 @@
 HLSDK = include/hlsdk
 HLSDK_XASH3D = include/hlsdk-xash3d
 METAMOD = include/metamod
-LUAMOD_API = include/luamod
 LUA = luajit/src
 
 ifeq "$(TARGET)" "win32"
@@ -13,7 +12,6 @@ SHLIBEXT=so
 endif
 
 DLL_SRCDIR=src
-
 DLLNAME=luamod_mm
 
 LUAMOD_VERMAIN = 0.3.6
@@ -22,27 +20,33 @@ LUAMOD_GIT_COMMIT := $(firstword $(shell git rev-parse --short=6 HEAD) unknown)
 
 CC?=cc
 CXX?=c++
-
-COMPILER_VER_CC = $(shell $(CC) -dumpversion)
-COMPILER_VER_CXX = $(shell $(CC) -dumpversion)
-
-OPT_CFLAGS = -O2 -flto -fno-stack-protector -fPIC -Wall
-
-BASE_CFLAGS = -D__USE_GNU -std=gnu++11 -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\" -DLUAMOD_BRANCH=\"$(LUAMOD_BRANCH)\"
+# Lto enbled by default for luamod dll and luajit
+LTO?=1
 
 ARCH=$(shell uname -m)
+COMPILER_VER_CC = $(shell $(CC) -dumpversion)
+COMPILER_VER_CXX = $(shell $(CXX) -dumpversion)
+
+OPT_CFLAGS = -O2 -fno-stack-protector
+BASE_CFLAGS = -D__USE_GNU -std=gnu++11 -DLUAMOD_VERSION=\"$(LUAMOD_VERSION)\" -DLUAMOD_BRANCH=\"$(LUAMOD_BRANCH)\" -fPIC -Wall
+
+ifeq ($(LTO), 1)
+CFLAGS += -flto
+LUA_CFLAGS += -flto
+LDFLAGS += -flto
+LUA_LDFLAGS += -flto
+endif
 
 ifeq ($(ARCH), x86_64)
 ARCH = i686
-ARCH_CFLAGS += -m32 -march=i686 -mtune=generic -msse3 -msse2
-LUA_FLAGS = -m32
+ARCH_CFLAGS += -m32 -march=i686 -mtune=generic -msse2
+LUA_CFLAGS += -m32
+LUA_LDFLAGS += -m32
 else ifeq ($(ARCH), aarch64)
 ARCH_CFLAGS += -march=native
-#ARCH = ARCH_UNAME
 XASH3D = 1
 else ifeq (, $(findstring arm,$(ARCH_UNAME)))
 ARCH_CFLAGS += -march=native
-#ARCH = ARCH_UNAME
 XASH3D = 1
 endif
 
@@ -53,9 +57,6 @@ else
 BUILD_TYPE = release
 BUILD_TYPE_CFLAGS = -DNDEBUG
 endif
-
-LUAMOD_VERSION := $(LUAMOD_VERMAIN)-$(BUILD_TYPE)-$(LUAMOD_GIT_COMMIT)
-DLL_OBJDIR=$(BUILD_TYPE).$(OS).$(ARCH)
 
 ifeq ($(XASH3D), 1)
 BUILD_TYPE_CFLAGS += -DXASH3D
@@ -70,12 +71,15 @@ BUILD_TYPE_CFLAGS += -DREHLDS_SUPPORT
 endif
 endif
 
-CFLAGS = $(BUILD_TYPE_CFLAGS) $(BASE_CFLAGS) $(OPT_CFLAGS) $(ARCH_CFLAGS)
+LUAMOD_VERSION := $(LUAMOD_VERMAIN)-$(BUILD_TYPE)-$(LUAMOD_GIT_COMMIT)
+DLL_OBJDIR = $(BUILD_TYPE).$(OS).$(ARCH)
 
-INCLUDE=-I. -I$(DLL_SRCDIR) -I$(HLSDK)/common -I$(HLSDK)/dlls -I$(HLSDK)/engine \
-                -I$(HLSDK)/game_shared -I$(HLSDK)/pm_shared -I$(HLSDK)/public -I$(METAMOD) -I$(LUAMOD_API) -I$(LUA)
+CFLAGS += $(BUILD_TYPE_CFLAGS) $(BASE_CFLAGS) $(OPT_CFLAGS) $(ARCH_CFLAGS)
 
-LDFLAGS=-L $(LUA) -lluajit -shared -lpthread
+INCLUDE=-I. -I$(DLL_SRCDIR) -I$(DLL_SRCDIR)/lua -I$(HLSDK)/common -I$(HLSDK)/dlls -I$(HLSDK)/engine \
+                -I$(HLSDK)/game_shared -I$(HLSDK)/pm_shared -I$(HLSDK)/public -I$(METAMOD) -I$(LUA)
+
+LDFLAGS += -L $(LUA) -lluajit -shared
 
 DO_CC=$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 DO_CXX=$(CXX) $(CFLAGS) $(INCLUDE) -o $@ -c $<
@@ -84,7 +88,7 @@ $(DLL_OBJDIR)/%.o: $(DLL_SRCDIR)/%.cpp
 	$(DO_CXX)
 
 SRC = $(wildcard src/*.cpp) $(wildcard src/lua/*.cpp)
-OBJ := $(SRC:$(DLL_SRCDIR)/%.cpp=$(DLL_OBJDIR)/%.o)
+OBJ := $(SRC:src/%.cpp=$(DLL_OBJDIR)/%.o)
 
 $(DLLNAME)_$(ARCH).$(SHLIBEXT) : lua neat depend $(OBJ)
 	$(CXX) $(CFLAGS) $(OBJ) $(LDFLAGS) -o $(DLL_OBJDIR)/$@
@@ -100,10 +104,10 @@ clean: depend
 	-rm -f $(DLL_OBJDIR)/$(DLLNAME)_$(ARCH).$(SHLIBEXT)
 	-rm -f $(DLL_OBJDIR)/Rules.depend
 
-lua: luajit/src/libluajit.a
+lua: $(LUA)/libluajit.a
 
-luajit/src/libluajit.a: luajit/src/*.h
-	cd $(LUA) && $(MAKE) BUILDMODE=static CFLAGS=$(LUA_FLAGS) LDFLAGS=$(LUA_FLAGS)
+$(LUA)/libluajit.a: $(LUA)/*.h
+	cd $(LUA) && $(MAKE) BUILDMODE=static CFLAGS="$(LUA_CFLAGS)" LDFLAGS="$(LUA_LDFLAGS)"
 
 depend: $(DLL_OBJDIR)/Rules.depend
 

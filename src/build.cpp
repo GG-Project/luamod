@@ -1,5 +1,5 @@
 #include "build.h"
-#include "luai.h"
+#include <lua.hpp>
 
 const char *LM_buildarch(void)
 {

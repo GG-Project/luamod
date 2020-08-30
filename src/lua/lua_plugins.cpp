@@ -1,12 +1,6 @@
-#include "luamod.h"
-#include <extdll.h>
-#include <meta_api.h>
-
 #include <exception>
-
+#include <luamod.h>
 #include "lua_plugins.h"
-#include "luai.h"
-#include "utils.h"
 
 #define PLUGINS_CONFIG_PATH "%s/addons/luamod/plugins.ini"
 #define PLUGINS_MAIN_LUA "%s/addons/luamod/plugins/%s/main.lua"
@@ -45,7 +39,7 @@ inline void remove_plugin_from_list( luamod_plugin_t *plugin )
     }
 }
 
-luamod_plugin_t *find_plugin_by_luastate(lua_State *L)
+luamod_plugin_t *plugin_by_luastate(lua_State *L)
 {
     luamod_plugin_t *ptr = plugins_list;
 
@@ -73,13 +67,13 @@ bool plugin_have_event(lua_State *L, const char *event)
     if(lua_isfunction(L, -1))
     {
         lua_remove(L, -2); // remove engine_events table
-        return 1;
+        return true;
     } else
     {
         lua_pop(L, -2); // Drop engine_events and not function
     }
 
-    return 0;
+    return false;
 }
 
 void plugin_error(lua_State *L, const char *fmt, ...)
@@ -90,7 +84,7 @@ void plugin_error(lua_State *L, const char *fmt, ...)
     vsnprintf(string, 8192, fmt, va);
     va_end(va);
 
-    luamod_plugin_t *plugin = find_plugin_by_luastate(L);
+    luamod_plugin_t *plugin = plugin_by_luastate(L);
 
     plugin->running = false;
     luaL_error(plugin->L, "%s", string);
@@ -100,7 +94,7 @@ void plugin_pcall(lua_State *L, int nargs, int rets)
 {
     // TODO: make stack traceback
     if (lua_pcall(L, nargs, rets, 0)) {
-        luamod_plugin_t *plugin = find_plugin_by_luastate(L);
+        luamod_plugin_t *plugin = plugin_by_luastate(L);
         plugin->running = false;
         ALERT(at_console, "[LM] Plugin %s\nRuntime Error : %s\n", plugin->name, lua_tostring(L, -1));
     }
@@ -123,6 +117,7 @@ int plugin_panic_catch_exceptions(lua_State *L)
     return 0;
 }
 
+// LuaJIT Example
 static int plugin_wrap_exceptions(lua_State *L, lua_CFunction f)
 {
   try {
@@ -169,6 +164,7 @@ void Plugin_Load(const char *filename)
 
     ptr->L = luaL_newstate();
 
+    // in tarantool fork gdb python script detecting luajit by luaJIT_setmode
     lua_pushlightuserdata(ptr->L, (void *)plugin_wrap_exceptions);
     luaJIT_setmode(ptr->L, -1, LUAJIT_MODE_WRAPCFUNC|LUAJIT_MODE_ON);
     lua_pop(ptr->L, 1);

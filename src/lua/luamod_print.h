@@ -1,5 +1,5 @@
 #pragma once
-#include "luai.h"
+#include <lua.hpp>
 #include <extdll.h>
 #include <meta_api.h>
 

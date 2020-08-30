@@ -1,5 +1,4 @@
 #include <extdll.h>
-//#include <meta_api.h>
 #include "callbacks.h"
 
 enginefuncs_t g_EngineFunctionsTable = {
@@ -169,9 +168,8 @@ enginefuncs_t g_EngineFunctionsTable = {
     NULL, // pfnQueryClientCvarValue()
     // Added Added 2005-11-22 (no SDK update)
     NULL, // pfnQueryClientCvarValue2()
-          // Added 2009-06-17 (no SDK update)
-          // NULL,	// pfnEngCheckParm()			// s1lent: comment out this, for
-          // compatibility with older versions metamod
+    // Added 2009-06-17 (no SDK update)
+    // NULL,	// pfnEngCheckParm()			// s1lent: comment out this, for compatibility with older versions metamod
 };
 
 enginefuncs_t g_EngineFunctionsTable_Post = {
@@ -341,9 +339,8 @@ enginefuncs_t g_EngineFunctionsTable_Post = {
     NULL, // pfnQueryClientCvarValue()
     // Added Added 2005-11-22 (no SDK update)
     NULL, // pfnQueryClientCvarValue2()
-          // Added 2009-06-17 (no SDK update)
-          // NULL,	// pfnEngCheckParm()			// s1lent: comment out this, for
-          // compatibility with older versions metamod
+    // Added 2009-06-17 (no SDK update)
+    // NULL,	// pfnEngCheckParm()			// s1lent: comment out this, for compatibility with older versions metamod
 };
 
 C_DLLEXPORT int GetEngineFunctions(enginefuncs_t *pengfuncsFromEngine, int *interfaceVersion)

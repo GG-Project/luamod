@@ -1,11 +1,6 @@
 #include "luamod_engfuncs.h"
-#include <extdll.h>
-#include <meta_api.h>
-#include <utils.h>
-#include <vector>
-
-#include <luamod_types.h>
 #include <cvar_manager.h>
+#include <vector>
 
 #ifdef REHLDS_SUPPORT
 #include "ex_rehlds_api.h"

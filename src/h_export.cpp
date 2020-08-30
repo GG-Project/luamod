@@ -1,6 +1,4 @@
 #include "luamod_commands.h"
-#include "luai.h"
-#include "luamod.h"
 #include "utils.h"
 #include <extdll.h>
 #include <meta_api.h>

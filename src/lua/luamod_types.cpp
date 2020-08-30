@@ -1,5 +1,4 @@
-#include "luai.h"
-#include <extdll.h>
+#include "luamod_types.h"
 
 void lua_pushvec3_t(lua_State *L, float *vector)
 {
@@ -20,23 +19,21 @@ void lua_pushedict(lua_State *L, edict_t *ed)
 
 edict_t *luaL_checkedict(lua_State *L, int index, bool can_nullptr)
 {
-    // maybe function can pass nullptr in edict ?
-    if(can_nullptr && lua_touserdata(L, index) == nullptr)
-        return nullptr;
-
     if(!lua_islightuserdata(L, index))
     {
         luaL_argerror(L, index, "not a edict");
         return nullptr;
     }
 
-    edict_t *ed = (edict_t*)lua_touserdata(L, index);
-
-    if(ed == nullptr && !can_nullptr)
+    // maybe function allow null pointer
+    if(can_nullptr && lua_touserdata(L, index) == nullptr)
     {
+        return nullptr;
+    } else {
         luaL_argerror(L, index, "edict pointer == nullptr");
         return nullptr;
     }
 
+    edict_t *ed = (edict_t*)lua_touserdata(L, index);
     return ed;
 }

@@ -1,7 +1,6 @@
-#include "ex_rehlds_api.h"
-#include "luamod.h"
 #include <extdll.h>
 #include <meta_api.h>
+#include "ex_rehlds_api.h"
 
 meta_globals_t *gpMetaGlobals;
 gamedll_funcs_t *gpGamedllFuncs;

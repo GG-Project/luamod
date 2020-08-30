@@ -21,14 +21,14 @@ void cmd_luamod_usage(void)
 void cmd_luamod_version()
 {
     PRINT_CONSOLE("LuaMod\n");
-    PRINT_CONSOLE("Version : " LUAMOD_VERSION "\n");
+    PRINT_CONSOLE("Version: " LUAMOD_VERSION "\n");
 #ifdef DEBUG
-    PRINT_CONSOLE("Build time : " __DATE__ ", " __TIME__ "\n");
+    PRINT_CONSOLE("Build time: " __DATE__ ", " __TIME__ "\n");
 #endif
 #ifdef LUAMOD_BRANCH
-    PRINT_CONSOLE("Branch : " LUAMOD_BRANCH "\n");
+    PRINT_CONSOLE("Branch: " LUAMOD_BRANCH "\n");
 #endif
-    PRINT_CONSOLE("OS : %s %s\n", LM_buildos(), LM_buildarch());
+    PRINT_CONSOLE("OS: %s %s\n", LM_buildos(), LM_buildarch());
 #ifdef DEBUG
     PRINT_CONSOLE("Compiler %s version %s\n", LM_buildcompiler(), LM_buildcompilerversion());
 #endif

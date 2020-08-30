@@ -1,5 +1,5 @@
 #pragma once
-#include "luai.h"
+#include <lua.hpp>
 
 namespace lm_utils {
 void init_api(lua_State *L);
