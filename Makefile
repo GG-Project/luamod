@@ -47,7 +47,7 @@ endif
 
 ifeq ($(ARCH), x86_64)
 ARCH = i686
-ARCH_CFLAGS += -march=i686 -msse -msse2 -mfpmath=sse
+ARCH_CFLAGS += -m32 -march=i686 -msse -msse2 -mfpmath=sse
 LUA_CFLAGS += -m32
 LUA_LDFLAGS += -m32
 else ifeq ($(ARCH), aarch64)
