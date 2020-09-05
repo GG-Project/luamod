@@ -1,6 +1,6 @@
 #include "luamod_types.h"
 
-void lua_pushvec3_t(lua_State *L, float *vector)
+void lua_pushvec3_t(lua_State *L, const float *vector)
 {
     lua_newtable(L);
     lua_pushnumber(L, 1);

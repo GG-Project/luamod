@@ -219,16 +219,7 @@ void pfnClientCommand(edict_t *pEntity)
 {
     luamod_plugin_t *ptr = plugins_list;
 
-    gpMetaGlobals->mres = MRES_HANDLED;
-
     while (ptr != nullptr) {
-
-        //if(!strncasecmp("say", CMD_ARGV(0), 4) || !strncasecmp("say_team", CMD_ARGV(0), 9))
-        //  {
-        //      gpMetaGlobals->mres = MRES_SUPERCEDE;
-        //  } else {
-        //      gpMetaGlobals->mres = MRES_HANDLED;
-        //  }
 
         if (plugin_have_event(ptr->L, "pfnClientCommand")) {
             lua_pushedict(ptr->L, pEntity);

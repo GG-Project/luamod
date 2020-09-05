@@ -1,5 +1,6 @@
 #include <extdll.h>
 #include "callbacks.h"
+#include "engine_callbacks.h"
 
 enginefuncs_t g_EngineFunctionsTable = {
     NULL, // pfnPrecacheModel()
@@ -48,16 +49,16 @@ enginefuncs_t g_EngineFunctionsTable = {
     NULL, // pfnLightStyle()
     NULL, // pfnDecalIndex()
     NULL, // pfnPointContents()
-    NULL, // pfnMessageBegin()
-    NULL, // pfnMessageEnd()
-    NULL, // pfnWriteByte()
-    NULL, // pfnWriteChar()
-    NULL, // pfnWriteShort()
-    NULL, // pfnWriteLong()
-    NULL, // pfnWriteAngle()
-    NULL, // pfnWriteCoord()
-    NULL, // pfnWriteString()
-    NULL, // pfnWriteEntity()
+    pfnMessageBegin, // pfnMessageBegin()
+    pfnMessageEnd, // pfnMessageEnd()
+    pfnWriteByte, // pfnWriteByte()
+    pfnWriteChar, // pfnWriteChar()
+    pfnWriteShort, // pfnWriteShort()
+    pfnWriteLong, // pfnWriteLong()
+    pfnWriteAngle, // pfnWriteAngle()
+    pfnWriteCoord, // pfnWriteCoord()
+    pfnWriteString, // pfnWriteString()
+    pfnWriteEntity, // pfnWriteEntity()
     NULL, // pfnCVarRegister()
     NULL, // pfnCVarGetFloat()
     NULL, // pfnCVarGetString()
