@@ -8,6 +8,8 @@ int l_pfnPrecacheSound(lua_State *L);
 //
 int l_pfnFindEntityByString(lua_State *L);
 //
+int l_pfnRemoveEntity(lua_State *L);
+//
 int l_pfnServerCommand(lua_State *L);
 int l_pfnServerExecute(lua_State *L);
 int l_pfnClientCommand(lua_State *L);

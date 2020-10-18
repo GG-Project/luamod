@@ -17,6 +17,10 @@ edict_t*	(*pfnFindEntityByString)( edict_t *pEdictStartSearchAfter, const char *
 */
 
 /*
+void    (*pfnRemoveEntity)( edict_t* e );
+*/
+
+/*
 void            (*pfnEmitSound)         ( edict_t *entity, int channel, const char *sample, float volume, float attenuation, int fFlags, int pitch );
 */
 
@@ -84,6 +88,8 @@ static const luaL_Reg enginefuncs_lib[] =
         {"precache_sound", lu_engfuncs::l_pfnPrecacheSound},
 
         {"find_entity_by_string", lu_engfuncs::l_pfnFindEntityByString},
+
+        {"remove_entity", lu_engfuncs::l_pfnRemoveEntity},
 
         {"server_command", lu_engfuncs::l_pfnServerCommand},
         {"server_execute", lu_engfuncs::l_pfnServerExecute},
@@ -154,6 +160,11 @@ int lu_engfuncs::l_pfnFindEntityByString(lua_State *L)
     edict_t *e2 = (*g_engfuncs.pfnFindEntityByString)(e,  field, value);
     lua_pushedict(L, e2);
     return 1;
+}
+
+int lu_engfuncs::l_pfnRemoveEntity(lua_State *L)
+{
+    REMOVE_ENTITY(luaL_checkedict(L, 1, false));
 }
 
 int lu_engfuncs::l_pfnServerCommand(lua_State *L)
