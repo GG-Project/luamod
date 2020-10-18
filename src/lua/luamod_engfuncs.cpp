@@ -165,6 +165,7 @@ int lu_engfuncs::l_pfnFindEntityByString(lua_State *L)
 int lu_engfuncs::l_pfnRemoveEntity(lua_State *L)
 {
     REMOVE_ENTITY(luaL_checkedict(L, 1, false));
+    return 0;
 }
 
 int lu_engfuncs::l_pfnServerCommand(lua_State *L)
