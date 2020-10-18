@@ -13,7 +13,11 @@ int		(*pfnPrecacheGeneric)                   (char* s);
 */
 
 /*
-void            (*pfnEmitSound)                         ( edict_t *entity, int channel, const char *sample, float volume, float attenuation, int fFlags, int pitch );
+edict_t*	(*pfnFindEntityByString)( edict_t *pEdictStartSearchAfter, const char *pszField, const char *pszValue );
+*/
+
+/*
+void            (*pfnEmitSound)         ( edict_t *entity, int channel, const char *sample, float volume, float attenuation, int fFlags, int pitch );
 */
 
 /*
@@ -79,6 +83,8 @@ static const luaL_Reg enginefuncs_lib[] =
         {"precache_model", lu_engfuncs::l_pfnPrecacheModel},
         {"precache_sound", lu_engfuncs::l_pfnPrecacheSound},
 
+        {"find_entity_by_string", lu_engfuncs::l_pfnFindEntityByString},
+
         {"server_command", lu_engfuncs::l_pfnServerCommand},
         {"server_execute", lu_engfuncs::l_pfnServerExecute},
         {"client_command", lu_engfuncs::l_pfnClientCommand},
@@ -138,6 +144,16 @@ int lu_engfuncs::l_pfnPrecacheSound(lua_State *L)
 {
     PRECACHE_SOUND(luaL_checkstring(L, 1));
     return 0;
+}
+
+int lu_engfuncs::l_pfnFindEntityByString(lua_State *L)
+{
+    const char *field = luaL_checkstring(L, 1);
+    const char *value = luaL_checkstring(L, 2);
+    edict_t *e = luaL_checkedict(L, 3, true);
+    edict_t *e2 = (*g_engfuncs.pfnFindEntityByString)(e,  field, value);
+    lua_pushedict(L, e2);
+    return 1;
 }
 
 int lu_engfuncs::l_pfnServerCommand(lua_State *L)
