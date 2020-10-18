@@ -154,9 +154,9 @@ int lu_engfuncs::l_pfnPrecacheSound(lua_State *L)
 
 int lu_engfuncs::l_pfnFindEntityByString(lua_State *L)
 {
-    const char *field = luaL_checkstring(L, 1);
-    const char *value = luaL_checkstring(L, 2);
-    edict_t *e = luaL_checkedict(L, 3, true);
+    edict_t *e = luaL_checkedict(L, 1, true);
+    const char *field = luaL_checkstring(L, 2);
+    const char *value = luaL_checkstring(L, 3);
     edict_t *e2 = (*g_engfuncs.pfnFindEntityByString)(e,  field, value);
     lua_pushedict(L, e2);
     return 1;
