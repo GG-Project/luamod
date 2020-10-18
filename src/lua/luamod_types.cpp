@@ -14,7 +14,12 @@ void lua_pushvec3_t(lua_State *L, const float *vector)
 
 void lua_pushedict(lua_State *L, edict_t *ed)
 {
-    lua_pushlightuserdata(L, ed);
+    if (ed)
+    {
+        lua_pushlightuserdata(L, ed);
+    } else {
+        lua_pushnil(L);
+    }
 }
 
 edict_t *luaL_checkedict(lua_State *L, int index, bool can_nullptr)
