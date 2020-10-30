@@ -88,6 +88,7 @@ static const luaL_Reg enginefuncs_lib[] =
         {"precache_sound", lu_engfuncs::l_pfnPrecacheSound},
 
         {"find_entity_by_string", lu_engfuncs::l_pfnFindEntityByString},
+        {"find_entitys_by_string", lu_engfuncs::l_pfnFindEntitysByString},
 
         {"remove_entity", lu_engfuncs::l_pfnRemoveEntity},
 
@@ -121,6 +122,7 @@ static const luaL_Reg enginefuncs_lib[] =
         {"cvar_set_string", lu_engfuncs::l_pfnCVarSetString},
 
         {"index_of_edict", lu_engfuncs::l_pfnIndexOfEdict},
+        {"edict_of_index", lu_engfuncs::l_pfnPEntityOfEntIndex},
 
         {"reg_user_msg", lu_engfuncs::l_pfnRegUserMsg},
 
@@ -157,8 +159,50 @@ int lu_engfuncs::l_pfnFindEntityByString(lua_State *L)
     edict_t *e = luaL_checkedict(L, 1, true);
     const char *field = luaL_checkstring(L, 2);
     const char *value = luaL_checkstring(L, 3);
-    edict_t *e2 = (*g_engfuncs.pfnFindEntityByString)(e,  field, value);
+    edict_t *e2 = FIND_ENTITY_BY_STRING(e,  field, value);
+
     lua_pushedict(L, e2);
+    return 1;
+}
+
+int lu_engfuncs::l_pfnFindEntitysByString(lua_State *L)
+{
+    const edict_t *e0 = INDEXENT(0);
+    edict_t *e = luaL_checkedict(L, 1, true);
+    const char *field = luaL_checkstring(L, 2);
+    const char *value = luaL_checkstring(L, 3);
+    edict_t *e2 = FIND_ENTITY_BY_STRING(e,  field, value);
+
+    if(e2 == e0)
+    {
+        // try to find woldspawn but its always have zero index
+        if(!strcmp(value, "worlspawn") && !strcmp(field, "classname"))
+            luaL_error(L, "try to find worlspawn");
+
+        lua_newtable(L);
+        return 1;
+    }
+
+    lua_newtable(L);
+
+    int count = 1;
+
+    lua_pushlightuserdata(L, e2);
+    lua_pushinteger(L, count++);
+
+    while (true) {
+        e2 = FIND_ENTITY_BY_STRING(e2, field, value);
+
+        if(e2 != e0)
+        {
+            lua_pushlightuserdata(L, e2);
+            lua_pushinteger(L, count++);
+            lua_settable(L,-3);
+        } else {
+            break;
+        }
+    }
+
     return 1;
 }
 
@@ -363,6 +407,12 @@ int lu_engfuncs::l_pfnCVarSetString(lua_State *L)
 int lu_engfuncs::l_pfnIndexOfEdict(lua_State *L)
 {
     lua_pushinteger(L, g_engfuncs.pfnIndexOfEdict(luaL_checkedict(L, 1, 1)));
+    return 1;
+}
+
+int lu_engfuncs::l_pfnPEntityOfEntIndex(lua_State *L)
+{
+    lua_pushedict(L, INDEXENT(luaL_checkinteger(L, 1)));
     return 1;
 }
 

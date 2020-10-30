@@ -7,6 +7,7 @@ int l_pfnPrecacheModel(lua_State *L);
 int l_pfnPrecacheSound(lua_State *L);
 //
 int l_pfnFindEntityByString(lua_State *L);
+int l_pfnFindEntitysByString(lua_State *L);
 //
 int l_pfnRemoveEntity(lua_State *L);
 //
@@ -42,6 +43,7 @@ int l_pfnCVarSetFloat(lua_State *L);
 int l_pfnCVarSetString(lua_State *L);
 //
 int l_pfnIndexOfEdict(lua_State *L);
+int l_pfnPEntityOfEntIndex(lua_State *L);
 //
 int l_pfnRegUserMsg(lua_State *L);
 //
