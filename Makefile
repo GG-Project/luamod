@@ -115,7 +115,7 @@ clean: depend
 
 lua: $(LUA)/libluajit.a
 
-$(LUA)/libluajit.a: $(LUA)/*.h
+$(LUA)/libluajit.a: $(LUA)/*.h $(LUA)/*.c
 	cd $(LUA) && $(MAKE) BUILDMODE=static CFLAGS="$(LUA_CFLAGS)" LDFLAGS="$(LUA_LDFLAGS)"
 
 depend: $(DLL_OBJDIR)/Rules.depend

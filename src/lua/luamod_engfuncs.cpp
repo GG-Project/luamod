@@ -6,89 +6,13 @@
 #include "ex_rehlds_api.h"
 #endif
 
-/*
-int		(*pfnPrecacheModel)                     (char* s);
-int		(*pfnPrecacheSound)                     (char* s);
-int		(*pfnPrecacheGeneric)                   (char* s);
-*/
-
-/*
-edict_t*	(*pfnFindEntityByString)( edict_t *pEdictStartSearchAfter, const char *pszField, const char *pszValue );
-*/
-
-/*
-void    (*pfnRemoveEntity)( edict_t* e );
-*/
-
-/*
-void            (*pfnEmitSound)         ( edict_t *entity, int channel, const char *sample, float volume, float attenuation, int fFlags, int pitch );
-*/
-
-/*
-void		(*pfnServerCommand)			(const char* str);
-void		(*pfnServerExecute)			(void);
-void		(*pfnClientCommand)			(edict_t* pEdict, const char* szFmt, ...);
-*/
-
-/*
-pfnSetClientKeyValue
-*/
-
-/*
-void		(*pfnMessageBegin)			(int msg_dest, int msg_type, const float *pOrigin, edict_t *ed);
-void		(*pfnMessageEnd)            (void);
-void		(*pfnWriteByte)				(int iValue);
-void		(*pfnWriteChar)				(int iValue);
-void		(*pfnWriteShort)			(int iValue);
-void		(*pfnWriteLong)				(int iValue);
-void		(*pfnWriteAngle)			(float flValue);
-void		(*pfnWriteCoord)			(float flValue);
-void		(*pfnWriteString)			(const char *sz);
-void		(*pfnWriteEntity)			(int iValue);
-*/
-
-/*
-char*           (*pfnGetInfoKeyBuffer)                  ( edict_t *e );                   // passing in NULL gets the serverinfo
-char*           (*pfnInfoKeyValue)                      ( char *infobuffer, const char *key );
-void            (*pfnSetKeyValue)                       ( char *infobuffer, const char *key, const char *value );
-void            (*pfnSetClientKeyValue)                 ( int clientIndex, char *infobuffer, const char *key, const char *value );
-*/
-
-/*
-int             (*pfnGetPlayerUserId)                   ( edict_t *e );
-unsigned int    (*pfnGetPlayerWONId)                    ( edict_t *e );
-void            (*pfnGetPlayerStats)                    ( const edict_t *pClient, int *ping, int *packet_loss );
-const char *    (*pfnGetPlayerAuthId)                   ( edict_t *e );
-*/
-
-/*
-void		(*pfnCVarRegister)			(cvar_t *pCvar);
-float		(*pfnCVarGetFloat)			(const char *szVarName);
-const char*	(*pfnCVarGetString)			(const char *szVarName);
-void		(*pfnCVarSetFloat)			(const char *szVarName, float flValue);
-void		(*pfnCVarSetString)                     (const char *szVarName, const char *szValue);
-cvar_t		(*pfnCVarGetPointer)                    (const char *szVarName);
-*/
-
-/*
-int     	(*pfnRegUserMsg)                        ( const char *pszName, int iSize );
-*/
-
-/*
-void		(*pfnClientPrintf)			( edict_t* pEdict, PRINT_TYPE ptype, const char *szMsg );
- */
-
-/*
-void            (*pfnQueryClientCvarValue2)             ( const edict_t *player, const char *cvarName, int requestID );
-*/
-
 static const luaL_Reg enginefuncs_lib[] =
 {
         {"precache_model", lu_engfuncs::l_pfnPrecacheModel},
         {"precache_sound", lu_engfuncs::l_pfnPrecacheSound},
 
         {"find_entity_by_string", lu_engfuncs::l_pfnFindEntityByString},
-        {"find_entitys_by_string", lu_engfuncs::l_pfnFindEntitysByString},
+        {"find_entities_by_string", lu_engfuncs::l_pfnFindEntitiesByString},
 
         {"remove_entity", lu_engfuncs::l_pfnRemoveEntity},
 
@@ -127,6 +51,7 @@ static const luaL_Reg enginefuncs_lib[] =
         {"reg_user_msg", lu_engfuncs::l_pfnRegUserMsg},
 
         {"client_printf", lu_engfuncs::l_pfnClientPrintf},
+        {"server_print", lu_engfuncs::l_pfnServerPrint},
 
         {"query_client_cvar_value2", lu_engfuncs::l_pfnQueryClientCvarValue2},
 
@@ -165,7 +90,7 @@ int lu_engfuncs::l_pfnFindEntityByString(lua_State *L)
     return 1;
 }
 
-int lu_engfuncs::l_pfnFindEntitysByString(lua_State *L)
+int lu_engfuncs::l_pfnFindEntitiesByString(lua_State *L)
 {
     const edict_t *e0 = INDEXENT(0);
     edict_t *e = luaL_checkedict(L, 1, true);
@@ -428,6 +353,12 @@ int lu_engfuncs::l_pfnClientPrintf(lua_State *L)
     if (print_type < 0 || print_type > 3)
         luaL_argerror(L, 2, "unknown print type");
     CLIENT_PRINTF(luaL_checkedict(L, 1, 0), (PRINT_TYPE)print_type, luaL_checkstring(L, 3));
+    return 0;
+}
+
+int lu_engfuncs::l_pfnServerPrint(lua_State *L)
+{
+    SERVER_PRINT(luaL_checkstring(L, 1));
     return 0;
 }
 
