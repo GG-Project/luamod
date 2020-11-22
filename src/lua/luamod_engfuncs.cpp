@@ -114,6 +114,7 @@ int lu_engfuncs::l_pfnFindEntitiesByString(lua_State *L)
 
     lua_pushlightuserdata(L, e2);
     lua_pushinteger(L, count++);
+    lua_settable(L,-3);
 
     while (true) {
         e2 = FIND_ENTITY_BY_STRING(e2, field, value);
