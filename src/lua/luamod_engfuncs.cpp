@@ -112,8 +112,8 @@ int lu_engfuncs::l_pfnFindEntitiesByString(lua_State *L)
 
     int count = 1;
 
-    lua_pushlightuserdata(L, e2);
     lua_pushinteger(L, count++);
+    lua_pushedict(L, e2);
     lua_settable(L,-3);
 
     while (true) {
@@ -121,8 +121,8 @@ int lu_engfuncs::l_pfnFindEntitiesByString(lua_State *L)
 
         if(e2 != e0)
         {
-            lua_pushlightuserdata(L, e2);
             lua_pushinteger(L, count++);
+            lua_pushedict(L, e2);
             lua_settable(L,-3);
         } else {
             break;
