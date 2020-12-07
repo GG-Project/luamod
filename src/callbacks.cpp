@@ -336,6 +336,8 @@ void pfnServerCommand(const char *str)
 
         ptr = ptr->m_next;
     }
+
+    RETURN_META(MRES_HANDLED);
 }
 
 void pfnCvarValue2(const edict_t *pEntity, int requestID, const char *pszCvarName, const char *pszValue)

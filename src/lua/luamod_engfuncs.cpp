@@ -158,23 +158,14 @@ int lu_engfuncs::l_pfnClientCommand(lua_State *L)
 
 int lu_engfuncs::l_pfnMessageBegin(lua_State *L)
 {
-    // luaL_checktable(L, 3); // Origin
-    std::vector<float> origin;
+    const float *origin = NULL;
 
-    lua_pushnil(L);
-    while (lua_next(L, 3)) {
-        lua_pushvalue(L, -1);
-        origin.push_back(luaL_checknumber(L, -1));
-        lua_pop(L, 2);
+    if( !lua_isnil(L, 3) )
+    {
+        origin = luaL_checkvec3_t(L, 3);
     }
 
-    MESSAGE_BEGIN(luaL_checkinteger(L, 1), // DEST
-        luaL_checkinteger(L, 2), // TYPE
-//      luaL_checkvec3_t(L, 3),
-        origin.data(),
-        luaL_checkedict(L, 4, 1) // PLAYER
-    );
-
+    MESSAGE_BEGIN(luaL_checkinteger(L, 1), luaL_checkinteger(L, 2), origin, luaL_checkedict(L, 4, 1));
     return 0;
 }
 

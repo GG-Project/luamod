@@ -12,6 +12,26 @@ void lua_pushvec3_t(lua_State *L, const float *vector)
     lua_settable(L, -3);
 }
 
+float *luaL_checkvec3_t(lua_State *L, int index)
+{
+    static float vector[3] = { 0.0f };
+
+    if( !lua_istable(L, index) )
+        luaL_argerror(L, 3, "not a vec3_t");
+
+    if( lua_objlen(L, index) > 3 )
+        luaL_argerror(L, 3, "not a vec3_t");
+
+    lua_pushnil(L);
+    for( size_t i = 0; lua_next(L, index); i++) {
+        lua_pushvalue(L, -1);
+        vector[i] = luaL_checknumber(L, -1);
+        lua_pop(L, 2);
+    }
+
+    return vector;
+}
+
 void lua_pushedict(lua_State *L, edict_t *ed)
 {
     if (ed)
