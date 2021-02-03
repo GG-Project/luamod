@@ -9,13 +9,10 @@
 
 void cmd_luamod_usage(void)
 {
-  PRINT_CONSOLE("usage: luamod <command> [<arguments>]\n");
-  PRINT_CONSOLE("   version          - display luamod version info\n");
-  PRINT_CONSOLE("   list             - list plugins currently loaded\n");
-  PRINT_CONSOLE("   cvars            - list cvars currently registred by luamod or plugins\n");
-  PRINT_CONSOLE("   load <name>      - load a plugin with the given name\n");
-  PRINT_CONSOLE("   unload <name>    - unload a plugin with the given name\n");
-  PRINT_CONSOLE("   restart <name>   - restart a plugin with the given name\n");
+    PRINT_CONSOLE("usage: luamod <command> [<arguments>]\n");
+    PRINT_CONSOLE("   version          - display luamod version info\n");
+    PRINT_CONSOLE("   cvars            - list cvars currently registred by luamod or plugins\n");
+    PRINT_CONSOLE("   restart          - full lua restart\n");
 }
 
 void cmd_luamod_version()
@@ -36,64 +33,10 @@ void cmd_luamod_version()
     PRINT_CONSOLE("Compiled with %s\n", LM_buildlua());
 }
 
-void Plugin_List();
-
-void cmd_luamod_pluginlist() { Plugin_List(); }
-
 void Cvar_Manager_List();
-
 void cmd_luamod_cvarlist() { Cvar_Manager_List(); }
-
-void Plugin_Load(const char *filename);
-
-void cmd_luamod_load()
-{
-  const char *filename = NULL;
-
-  filename = CMD_ARGV(2);
-
-  if(!filename)
-    {
-    cmd_luamod_usage();
-    return;
-    }
-
-  Plugin_Load( filename );
-}
-
-void Plugin_Close( const char *filename );
-
-void cmd_luamod_unload()
-{
-    const char *filename = NULL;
-
-    filename = CMD_ARGV(2);
-
-    if(!filename)
-    {
-        cmd_luamod_usage();
-        return;
-    }
-
-    Plugin_Close( filename );
-}
-
-void Plugin_Restart( const char *filename );
-
-void cmd_luamod_restart()
-{
-    const char *filename = NULL;
-
-    filename = CMD_ARGV(2);
-
-    if(!filename)
-    {
-        cmd_luamod_usage();
-        return;
-    }
-
-    Plugin_Restart( filename );
-}
+void worker_restart();
+void cmd_luamod_restart() { worker_restart(); }
 
 void LuaMod_COMMAND(void)
 {
@@ -103,14 +46,8 @@ void LuaMod_COMMAND(void)
 
     if (!strcasecmp(cmd, "version"))
         cmd_luamod_version();
-    else if (!strcasecmp(cmd, "list"))
-        cmd_luamod_pluginlist();
     else if(!strcasecmp(cmd, "cvars"))
       cmd_luamod_cvarlist();
-    else if (!strcasecmp(cmd, "load"))
-        cmd_luamod_load();
-    else if (!strcasecmp(cmd, "unload"))
-        cmd_luamod_unload();
     else if (!strcasecmp(cmd, "restart"))
         cmd_luamod_restart();
     else {

@@ -3,7 +3,6 @@
 #include "luamod_engfuncs.h"
 #include "luamod_global.h"
 #include "luamod_print.h"
-#include "luamod_plugins.h"
 #include "luamod_utils.h"
 
 void load_lua_api(lua_State *L)
@@ -12,7 +11,6 @@ void load_lua_api(lua_State *L)
     lua_setglobal(L, "engine_events");
 
     luaL_openlibs(L);
-    lu_plugin_api::init(L);
     lu_luamod::init_api(L);
     lm_utils::init_api(L);
     lu_output::init_api(L);

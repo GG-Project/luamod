@@ -1,7 +1,7 @@
 #pragma once
 
 #include <lua.hpp>
-#include <lua_plugins.h>
+#include <lua_worker.h>
 #include <luamod_types.h>
 
 #include <extdll.h>

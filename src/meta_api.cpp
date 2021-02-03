@@ -41,14 +41,14 @@ META_FUNCTIONS gMetaFunctionTable = {
     GetEngineFunctions_Post, // pfnGetEngineFunctions_Post	META; called after HL engine
 };
 
-void Load_Plugins_From_Config(void);
+void worker_load();
 
 C_DLLEXPORT int Meta_Attach(PLUG_LOADTIME now, META_FUNCTIONS *pFunctionTable, meta_globals_t *pMGlobals, gamedll_funcs_t *pGamedllFuncs)
 {
     gpMetaGlobals = pMGlobals;
     gpGamedllFuncs = pGamedllFuncs;
 
-    Load_Plugins_From_Config();
+    worker_load();
 
 #ifdef REHLDS_SUPPORT
     if (meta_init_rehlds_api())

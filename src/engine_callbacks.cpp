@@ -1,9 +1,7 @@
 #include "callbacks.h"
 #include "luamod.h"
-#include "lua/lua_plugins.h"
+#include "lua/lua_worker.h"
 #include "luamod_types.h"
-
-extern luamod_plugin_t *plugins_list;
 
 #undef RETURN_META
 #undef RETURN_META_VALUE
@@ -16,172 +14,92 @@ extern luamod_plugin_t *plugins_list;
 
 void pfnMessageBegin(int msg_dest, int msg_type, const float *pOrigin, edict_t *pEntity)
 {
-    luamod_plugin_t *ptr = plugins_list;
-
-    while (ptr != nullptr) {
-
-        if (plugin_have_event(ptr->L, "pfnMessageBegin")) {
-            lua_pushnumber(ptr->L, msg_dest);
-            lua_pushnumber(ptr->L, msg_type);
-            lua_pushvec3_t(ptr->L, pOrigin);
-            lua_pushedict(ptr->L, pEntity);
-            plugin_pcall(ptr->L, 4, 0);
-        }
-
-        ptr = ptr->m_next;
+    if (worker_have_event(core, "pfnMessageBegin")) {
+        lua_pushnumber(core, msg_dest);
+        lua_pushnumber(core, msg_type);
+        lua_pushvec3_t(core, pOrigin);
+        lua_pushedict(core, pEntity);
+        worker_pcall(core, 4, 0);
     }
-
     RETURN_META(MRES_HANDLED);
 }
 
 void pfnMessageEnd(void)
 {
-    luamod_plugin_t *ptr = plugins_list;
-
-    while (ptr != nullptr) {
-
-        if (plugin_have_event(ptr->L, "pfnMessageEnd")) {
-            plugin_pcall(ptr->L, 0, 0);
-        }
-
-        ptr = ptr->m_next;
+    if (worker_have_event(core, "pfnMessageEnd")) {
+        worker_pcall(core, 0, 0);
     }
-
     RETURN_META(MRES_HANDLED);
 }
 
 void pfnWriteByte(int iValue)
 {
-    luamod_plugin_t *ptr = plugins_list;
-
-    while (ptr != nullptr) {
-
-        if (plugin_have_event(ptr->L, "pfnWriteByte")) {
-            lua_pushnumber(ptr->L, iValue);
-            plugin_pcall(ptr->L, 1, 0);
-        }
-
-        ptr = ptr->m_next;
+    if (worker_have_event(core, "pfnWriteByte")) {
+        lua_pushnumber(core, iValue);
+        worker_pcall(core, 1, 0);
     }
-
     RETURN_META(MRES_HANDLED);
 }
 
 void pfnWriteChar(int iValue)
 {
-    luamod_plugin_t *ptr = plugins_list;
-
-    while (ptr != nullptr) {
-
-        if (plugin_have_event(ptr->L, "pfnWriteChar")) {
-            lua_pushnumber(ptr->L, iValue);
-            plugin_pcall(ptr->L, 1, 0);
-        }
-
-        ptr = ptr->m_next;
+    if (worker_have_event(core, "pfnWriteChar")) {
+        lua_pushnumber(core, iValue);
+        worker_pcall(core, 1, 0);
     }
-
     RETURN_META(MRES_HANDLED);
 }
 
 void pfnWriteShort(int iValue)
 {
-    luamod_plugin_t *ptr = plugins_list;
-
-    while (ptr != nullptr) {
-
-        if (plugin_have_event(ptr->L, "pfnWriteShort")) {
-            lua_pushnumber(ptr->L, iValue);
-            plugin_pcall(ptr->L, 1, 0);
-        }
-
-        ptr = ptr->m_next;
+    if (worker_have_event(core, "pfnWriteShort")) {
+        lua_pushnumber(core, iValue);
+        worker_pcall(core, 1, 0);
     }
-
     RETURN_META(MRES_HANDLED);
 }
 
 void pfnWriteLong(int iValue)
 {
-    luamod_plugin_t *ptr = plugins_list;
-
-    while (ptr != nullptr) {
-
-        if (plugin_have_event(ptr->L, "pfnWriteLong")) {
-            lua_pushnumber(ptr->L, iValue);
-            plugin_pcall(ptr->L, 1, 0);
-        }
-
-        ptr = ptr->m_next;
+    if (worker_have_event(core, "pfnWriteLong")) {
+        lua_pushnumber(core, iValue);
+        worker_pcall(core, 1, 0);
     }
-
     RETURN_META(MRES_HANDLED);
 }
 
 void pfnWriteAngle(float iValue)
 {
-    luamod_plugin_t *ptr = plugins_list;
-
-    while (ptr != nullptr) {
-
-        if (plugin_have_event(ptr->L, "pfnWriteAngle")) {
-            lua_pushnumber(ptr->L, iValue);
-            plugin_pcall(ptr->L, 1, 0);
-        }
-
-        ptr = ptr->m_next;
+    if (worker_have_event(core, "pfnWriteAngle")) {
+        lua_pushnumber(core, iValue);
+        worker_pcall(core, 1, 0);
     }
-
     RETURN_META(MRES_HANDLED);
 }
 
 void pfnWriteCoord(float iValue)
 {
-    luamod_plugin_t *ptr = plugins_list;
-
-    while (ptr != nullptr) {
-
-        if (plugin_have_event(ptr->L, "pfnWriteCoord")) {
-            lua_pushnumber(ptr->L, iValue);
-            plugin_pcall(ptr->L, 1, 0);
-        }
-
-        ptr = ptr->m_next;
+    if (worker_have_event(core, "pfnWriteCoord")) {
+        lua_pushnumber(core, iValue);
+        worker_pcall(core, 1, 0);
     }
-
     RETURN_META(MRES_HANDLED);
 }
 
 void pfnWriteString(const char* Value)
 {
-    luamod_plugin_t *ptr = plugins_list;
-
-    while (ptr != nullptr) {
-
-        if (plugin_have_event(ptr->L, "pfnWriteString")) {
-            lua_pushstring(ptr->L, Value);
-            plugin_pcall(ptr->L, 1, 0);
-        }
-
-        ptr = ptr->m_next;
+    if (worker_have_event(core, "pfnWriteString")) {
+        lua_pushstring(core, Value);
+        worker_pcall(core, 1, 0);
     }
-
     RETURN_META(MRES_HANDLED);
 }
 
 void pfnWriteEntity(int iValue)
 {
-    luamod_plugin_t *ptr = plugins_list;
-
-    while (ptr != nullptr) {
-
-        if (plugin_have_event(ptr->L, "pfnWriteEntity")) {
-            lua_pushnumber(ptr->L, iValue);
-            plugin_pcall(ptr->L, 1, 0);
-        }
-
-        ptr = ptr->m_next;
+    if (worker_have_event(core, "pfnWriteEntity")) {
+        lua_pushnumber(core, iValue);
+        worker_pcall(core, 1, 0);
     }
-
     RETURN_META(MRES_HANDLED);
 }
