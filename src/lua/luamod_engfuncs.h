@@ -48,6 +48,9 @@ int l_pfnPEntityOfEntIndex(lua_State *L);
 int l_pfnRegUserMsg(lua_State *L);
 //
 int l_pfnClientPrintf(lua_State *L);
+//
+int l_pfnAddServerCommand(lua_State *L);
+//
 int l_pfnServerPrint(lua_State *L);
 //
 int l_pfnQueryClientCvarValue2(lua_State *L);

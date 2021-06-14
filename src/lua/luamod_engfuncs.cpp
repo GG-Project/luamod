@@ -51,6 +51,7 @@ static const luaL_Reg enginefuncs_lib[] =
         {"reg_user_msg", lu_engfuncs::l_pfnRegUserMsg},
 
         {"client_printf", lu_engfuncs::l_pfnClientPrintf},
+        {"add_server_command", lu_engfuncs::l_pfnAddServerCommand},
         {"server_print", lu_engfuncs::l_pfnServerPrint},
 
         {"query_client_cvar_value2", lu_engfuncs::l_pfnQueryClientCvarValue2},
@@ -345,6 +346,28 @@ int lu_engfuncs::l_pfnClientPrintf(lua_State *L)
     if (print_type < 0 || print_type > 3)
         luaL_argerror(L, 2, "unknown print type");
     CLIENT_PRINTF(luaL_checkedict(L, 1, 0), (PRINT_TYPE)print_type, luaL_checkstring(L, 3));
+    return 0;
+}
+
+static void pfnConsoleCmd_callback()
+{
+    // Use this name for server commands callback
+    if (worker_have_event(core, "pfnConsoleCmd")) {
+        // Push table
+        lua_newtable(core);
+        for (int i = 0; i < CMD_ARGC(); i++) {
+            lua_pushnumber(core, i + 1); // Key
+            lua_pushstring(core, CMD_ARGV(i)); // Value
+            lua_settable(core, -3);
+        }
+        lua_pushstring(core, CMD_ARGS());
+        worker_pcall(core, 2, 0);
+    }
+}
+
+int lu_engfuncs::l_pfnAddServerCommand(lua_State *L)
+{
+    REG_SVR_COMMAND(luaL_checkstring(L, 1), pfnConsoleCmd_callback);
     return 0;
 }
 

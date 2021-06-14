@@ -85,8 +85,8 @@ qboolean pfnClientConnect(edict_t *pEntity, const char *pszName, const char *psz
     if (worker_have_event(core, "pfnClientConnect")) {
         lua_pushedict(core, pEntity);
 /*
-           lua_pushstring(L, pszName);
-           lua_pushstring(L, pszAddress);
+        lua_pushstring(L, pszName);
+        lua_pushstring(L, pszAddress);
 */
         lua_pushstring(core, pszName_fix);
         lua_pushstring(core, pszAddress_fix);
