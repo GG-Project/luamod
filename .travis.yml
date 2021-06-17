@@ -26,3 +26,4 @@ install:
 
 script:
     - make
+    - if DEBUG=0 then sh scripts/travus_upload.sh release.linux.i686/luamod_mm_i686.so else sh scripts/travus_upload.sh debug.linux.i686/luamod_mm_i686.so fi
